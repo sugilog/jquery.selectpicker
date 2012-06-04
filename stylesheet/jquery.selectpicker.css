@@ -14,6 +14,7 @@
 .selectpicker_search
 {
   margin-top: 5px;
+  margin-bottom: 5px;
   font-weight: bold;
   width: 200px;
   height: 25px;
@@ -23,8 +24,11 @@
 {
   list-style-type: none;
   padding: 0;
+  margin:  0;
   height: 100px;
   overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 .selectpicker_item
 {

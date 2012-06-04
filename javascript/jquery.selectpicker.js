@@ -3,7 +3,6 @@
  * Copyright 2012, TAKAYUKI SUGITA (sugilog)
 */
 (function($) {
-//var selectpicker = { };
 
 $.fn.selectpicker = function(_options) {
   // prepare
@@ -19,11 +18,11 @@ $.fn.selectpicker = function(_options) {
     },
     dataKey: "selectpicker_option_value",
     cssClass: {
-      frame: "selectpicker_frame",
-      label: "selectpicker_label",
+      frame:  "selectpicker_frame",
+      label:  "selectpicker_label",
       search: "selectpicker_search",
-      list: "selectpicker_list",
-      item: "selectpicker_item"
+      list:   "selectpicker_list",
+      item:   "selectpicker_item"
     }
   };
 
