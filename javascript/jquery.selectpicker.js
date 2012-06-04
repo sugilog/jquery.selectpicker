@@ -14,16 +14,26 @@ $.fn.selectpicker = function(_options) {
       id:   $(this).get(0).id,
       name: $(this).get(0).name,
       labels: [],
-      values: []
+      values: [],
+      searchWords: []
     },
-    input: {},
+    input: {}
   };
 
   selectpickerItems.input.id = "#selectpicker_" + selectpickerItems.select.id;
 
   $(this).find("option").each(function(idx, val) {
-    selectpickerItems.select.labels.push(val.text);
+    var label = val.text;
+    var searchWord = label;
+    var kana = $(val).data("kana");
+
+    if (kana.length > 0) {
+      searchWord = label + "," + kana;
+    }
+
+    selectpickerItems.select.labels.push(label);
     selectpickerItems.select.values.push($(val).val());
+    selectpickerItems.select.searchWords.push(searchWord);
   });
 
 
@@ -39,7 +49,6 @@ $.fn.selectpicker = function(_options) {
     appendOptions: function(options) {
       var optionsBase;
 
-      console.log(this.options.id);
       if ($(this.options.id).length <= 0) {
         optionsBase = $("<ul>").prop({id: this.options.id.replace("#", "")}).css({"list-style-type": "none"});
         $(selectpickerItems.input.id).after(optionsBase);
@@ -73,13 +82,16 @@ $.fn.selectpicker = function(_options) {
     var query = $(this).val();
     var regex = new RegExp(query);
 
-    var results = $(selectpickerItems.select.labels).map(function(idx, val){
+    var results = $(selectpickerItems.select.searchWords).map(function(idx, val){
       if (regex.test(val)) {
-        return {value: selectpickerItems.select.values[idx], label: val};
+        return {
+          value: selectpickerItems.select.values[idx],
+          label: selectpickerItems.select.labels[idx]
+        };
       }
     }).toArray();
 
-    selectpickerWidget.appendOptions(results);
+    selectpickerWidget.appendOptions( (results.length == 0) ? {label: "not found"} : results);
   });
 }
 
