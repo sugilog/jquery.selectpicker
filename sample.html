@@ -71,7 +71,11 @@
 
     <script type="text/javascript">
     <!--
-      $("#select_prefecture").selectpicker();
+    $("#select_prefecture").selectpicker({
+      change: function() {
+        console.log("change");
+      }
+    });
     -->
     </script>
   </body>

@@ -7,6 +7,7 @@
 $.fn.selectpicker = function(_options) {
   // prepare
   var _this = this;
+  _options = _options ? _options : {};
 
   var selectpickerItems = {
     select: {
@@ -94,6 +95,10 @@ $.fn.selectpicker = function(_options) {
       $(selectpickerItems.select.id).val(value);
       $(this.id).val(value);
       $(selectpickerWidget.picker.labelId).text($(selectpickerItems.select.id).find(":selected").text());
+
+      if (typeof _options.change !== "undefined") {
+        _options.change.call();
+      }
     }
   };
   selectpickerWidget.options = {
