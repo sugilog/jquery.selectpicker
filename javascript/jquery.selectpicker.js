@@ -112,6 +112,7 @@ $.fn.selectpicker = function(_options) {
     },
     show: function() {
       $(this.baseId).show();
+      $(this.inputId).focus();
       $(selectpickerWidget.picker.labelId).removeClass(selectpickerItems.cssClass.open);
       $(selectpickerWidget.picker.labelId).addClass(selectpickerItems.cssClass.close);
     },
