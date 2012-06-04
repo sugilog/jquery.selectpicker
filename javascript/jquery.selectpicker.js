@@ -18,6 +18,7 @@ $.fn.selectpicker = function(_options) {
     },
     dataKey: "selectpicker_option_value",
     cssClass: {
+      base:   "selectpicker_base",
       frame:  "selectpicker_frame",
       label:  "selectpicker_label",
       search: "selectpicker_search",
@@ -45,6 +46,7 @@ $.fn.selectpicker = function(_options) {
   var selectpickerWidget = {};
   selectpickerWidget.picker = {
     baseId:  "#selectpicker_" + selectpickerItems.select.id.replace("#", ""),
+    frameId: "#selectpicker_" + selectpickerItems.select.id.replace("#", "") + "_frame",
     labelId: "#selectpicker_" + selectpickerItems.select.id.replace("#", "") + "_label",
     append: function() {
       $(_this)
@@ -53,19 +55,26 @@ $.fn.selectpicker = function(_options) {
         .after(
           $("<div>")
             .prop({id: this.baseId.replace("#", "")})
-            .addClass(selectpickerItems.cssClass.frame)
+            .css({position: "static"})
+            .addClass(selectpickerItems.cssClass.base)
             .append(
               $("<div>")
-                .prop({id: this.labelId.replace("#", "")})
-                .addClass(selectpickerItems.cssClass.label)
+                .prop({id: this.frameId.replace("#", "")})
+                .css({position: "absolute", zIndex: 100})
+                .addClass(selectpickerItems.cssClass.frame)
+                .append(
+                  $("<div>")
+                    .prop({id: this.labelId.replace("#", "")})
+                    .addClass(selectpickerItems.cssClass.label)
+                )
             )
         );
     }
   };
   selectpickerWidget.form = {
-    id: selectpickerWidget.picker.baseId + "_hidden",
+    id: selectpickerWidget.picker.frameId + "_hidden",
     append: function() {
-      $(selectpickerWidget.picker.baseId)
+      $(selectpickerWidget.picker.frameId)
         .append(
           $("<input>")
             .prop({
@@ -113,15 +122,15 @@ $.fn.selectpicker = function(_options) {
         this.hide();
       }
     },
-    baseId:  selectpickerWidget.picker.baseId + "_options",
-    childId: selectpickerWidget.picker.baseId + "_options_child",
-    inputId: selectpickerWidget.picker.baseId + "_options_search",
+    baseId:  selectpickerWidget.picker.frameId + "_options",
+    childId: selectpickerWidget.picker.frameId + "_options_child",
+    inputId: selectpickerWidget.picker.frameId + "_options_search",
     base: function() {
       var optionsBase;
 
       if ($(this.baseId).length <= 0) {
         optionsBase = $("<div>").prop({id: this.baseId.replace("#", "")}).append(this.search());
-        $(selectpickerWidget.picker.baseId).append(optionsBase);
+        $(selectpickerWidget.picker.frameId).append(optionsBase);
       }
       else {
         optionsBase = $(this.baseId);
