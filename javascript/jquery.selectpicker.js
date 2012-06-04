@@ -25,7 +25,8 @@ $.fn.selectpicker = function(_options) {
       list:   "selectpicker_list",
       item:   "selectpicker_item",
       open:   "selectpicker_label_open",
-      close:  "selectpicker_label_close"
+      close:  "selectpicker_label_close",
+      current: "selectpicker_current_pick"
     }
   };
 
@@ -202,6 +203,33 @@ $.fn.selectpicker = function(_options) {
     var results = selectpickerWidget.options.find(query);
     selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\""), value: ""} : results);
   });
+
+// FIXME: keydown selecting: scrolling and picking
+//  $(selectpickerWidget.options.inputId).keydown(function(e) {
+//    if (e.keyCode == "38" || e.keyCode == "40") {
+//      var currentPick;
+
+//      $(selectpickerWidget.options.childId).find("li").each(function() {
+//        if ($(this).hasClass(selectpickerItems.cssClass.current)) {
+//          currentPick = $(this);
+//          return;
+//        }
+//      });
+
+//      if (typeof currentPick === "undefined") {
+//        currentPick = $(selectpickerWidget.options.childId).children(":first");
+//        currentPick.addClass(selectpickerItems.cssClass.current);
+//      }
+
+//      var target = ((e.keyCode == "38") ? currentPick.prev() : currentPick.next());
+
+//      if (target.length > 0) {
+//        target.addClass(selectpickerItems.cssClass.current);
+//        currentPick.removeClass(selectpickerItems.cssClass.current);
+//        target.animate({scrollTop: $(selectpickerWidget.options.childId).offset().top}, "fast");
+//      }
+//    }
+//  });
 }
 
 
