@@ -209,32 +209,39 @@ $.fn.selectpicker = function(_options) {
     selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\""), value: ""} : results);
   });
 
-// FIXME: keydown selecting: scrolling and picking
-//  $(selectpickerWidget.options.inputId).keydown(function(e) {
-//    if (e.keyCode == "38" || e.keyCode == "40") {
-//      var currentPick;
+  $(selectpickerWidget.options.inputId).keydown(function(e) {
+    if (e.keyCode == "13" || e.keyCode == "38" || e.keyCode == "40") {
+      var currentPick;
 
-//      $(selectpickerWidget.options.childId).find("li").each(function() {
-//        if ($(this).hasClass(selectpickerItems.cssClass.current)) {
-//          currentPick = $(this);
-//          return;
-//        }
-//      });
+      $(selectpickerWidget.options.childId).find("li").each(function() {
+        if ($(this).hasClass(selectpickerItems.cssClass.current)) {
+          currentPick = $(this);
+          return;
+        }
+      });
 
-//      if (typeof currentPick === "undefined") {
-//        currentPick = $(selectpickerWidget.options.childId).children(":first");
-//        currentPick.addClass(selectpickerItems.cssClass.current);
-//      }
+      if (typeof currentPick === "undefined") {
+        currentPick = $(selectpickerWidget.options.childId).children(":first");
+        currentPick.addClass(selectpickerItems.cssClass.current);
+      }
 
-//      var target = ((e.keyCode == "38") ? currentPick.prev() : currentPick.next());
+      if (e.keyCode == "13") {
+        selectpickerWidget.form.set(currentPick.data(selectpickerItems.dataKey));
+        selectpickerWidget.options.hide();
+        return false;
+      }
+      else {
+        var target = ((e.keyCode == "38") ? currentPick.prev() : currentPick.next());
 
-//      if (target.length > 0) {
-//        target.addClass(selectpickerItems.cssClass.current);
-//        currentPick.removeClass(selectpickerItems.cssClass.current);
-//        target.animate({scrollTop: $(selectpickerWidget.options.childId).offset().top}, "fast");
-//      }
-//    }
-//  });
+        if (target.length > 0) {
+          target.addClass(selectpickerItems.cssClass.current);
+          currentPick.removeClass(selectpickerItems.cssClass.current);
+          var scrollOption = {scrollTop: (target.offset().top - target.parent().children(":first").offset().top)};
+          target.parent().animate(scrollOption, "fast");
+        }
+      }
+    }
+  });
 }
 
 
