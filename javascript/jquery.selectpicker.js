@@ -148,7 +148,7 @@ $.fn.selectpicker = function(_options) {
           $("<a>")
             .prop({href: "#"})
             .text(label)
-            .one("click", function(){
+            .on("click", function(){
               selectpickerWidget.form.set($(this).closest("li").data(selectpickerItems.dataKey));
               selectpickerWidget.options.hide();
             })
