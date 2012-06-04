@@ -13,14 +13,15 @@ $.fn.selectpicker = function(_options) {
     select: {
       id:   $(this).get(0).id,
       name: $(this).get(0).name,
+      selected: "",
       labels: [],
       values: [],
       searchWords: []
     },
-    input: {}
+    picker: {}
   };
 
-  selectpickerItems.input.id = "#selectpicker_" + selectpickerItems.select.id;
+  selectpickerItems.picker.id = "#selectpicker_" + selectpickerItems.select.id;
 
   $(this).find("option").each(function(idx, val) {
     var label = val.text;
@@ -36,6 +37,7 @@ $.fn.selectpicker = function(_options) {
     selectpickerItems.select.searchWords.push(searchWord);
   });
 
+  selectpickerItems.select.selected = $(this).find(":selected");
 
   var selectpickerWidget = {
     append: function() {
@@ -43,55 +45,94 @@ $.fn.selectpicker = function(_options) {
         .prop("disabled", true)
         .hide()
         .after(
-          $("<input>").prop({type: "text", id: selectpickerItems.input.id.replace("#", ""), name: selectpickerItems.select.name, autocomplete: "off"})
+          $("<div>")
+            .prop({id: selectpickerItems.picker.id.replace("#", "")})
+            .text(selectpickerItems.select.selected.text())
         );
     },
-    appendOptions: function(options) {
-      var optionsBase;
-
-      if ($(this.options.id).length <= 0) {
-        optionsBase = $("<ul>").prop({id: this.options.id.replace("#", "")}).css({"list-style-type": "none"});
-        $(selectpickerItems.input.id).after(optionsBase);
-      }
-      else {
-        optionsBase = $(this.options.id);
-        optionsBase.children().remove();
-      }
-
-      var that = this;
-      $(options).each(function(_, val) {
-        optionsBase.append(that.options.child(val.label, val.value))
-      });
-    },
     options: {
-      id:    selectpickerItems.input.id + "_options",
+      append: function(options) {
+        var that = this;
+        var base = that.base();
+
+        $(options).each(function(_, val) {
+          base.find(that.childId).append(that.child(val.label, val.value))
+        });
+      },
+      baseId:  selectpickerItems.picker.id + "_options",
+      childId: selectpickerItems.picker.id + "_options_child",
+      inputId: selectpickerItems.picker.id + "_options_search",
+      base: function() {
+        var optionsBase;
+
+        if ($(this.baseId).length <= 0) {
+          optionsBase = $("<div>").prop({id: this.baseId.replace("#", "")}).append(this.search());
+          $(selectpickerItems.picker.id).append(optionsBase);
+        }
+        else {
+          optionsBase = $(this.baseId);
+        }
+
+        if (optionsBase.find(this.childId).length <= 0) {
+          optionsBase
+            .append(
+              $("<ul>").prop({id: this.childId.replace("#", "")}).css({"list-style-type": "none"})
+            );
+        }
+        else {
+          optionsBase.find(this.childId).children().remove();
+        }
+
+        return optionsBase;
+      },
+      search: function() {
+        return $("<input>")
+          .prop({
+            type: "text",
+            id:   this.inputId.replace("#", ""),
+            name: selectpickerItems.select.name, autocomplete: "off"
+          });
+      },
       child: function(label, value) {
         return $("<li>")
-          .css({width: "200px", height: "20px"})
+          .css({
+            width: "200px",
+            height: "20px"
+          })
           .data({selectpicker_option_value: value})
           .append(
-            $("<a>").css({display: "block", width: "100%", height: "100%", "text-decoration": "none"}).prop({href: "#"}).text(label)
+            $("<a>")
+              .css({display: "block", width: "100%", height: "100%", "text-decoration": "none"})
+              .prop({href: "#"})
+              .text(label)
+              .one("click", function(){
+                // FIXME: set value
+                alert($(this).text());
+              })
           )
+      },
+      find: function(query) {
+        var regex = new RegExp(query);
+
+        return $(selectpickerItems.select.searchWords).map(function(idx, val){
+          if (regex.test(val)) {
+            return {
+              value: selectpickerItems.select.values[idx],
+              label: selectpickerItems.select.labels[idx]
+            };
+          }
+        }).toArray();
       }
     }
   };
 
   selectpickerWidget.append();
+  selectpickerWidget.options.append(selectpickerWidget.options.find(""));
 
-  $(selectpickerItems.input.id).observeField(0.5, function(){
+  $(selectpickerWidget.options.inputId).observeField(0.5, function(){
     var query = $(this).val();
-    var regex = new RegExp(query);
-
-    var results = $(selectpickerItems.select.searchWords).map(function(idx, val){
-      if (regex.test(val)) {
-        return {
-          value: selectpickerItems.select.values[idx],
-          label: selectpickerItems.select.labels[idx]
-        };
-      }
-    }).toArray();
-
-    selectpickerWidget.appendOptions( (results.length == 0) ? {label: "not found"} : results);
+    var results = selectpickerWidget.options.find(query);
+    selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\"")} : results);
   });
 }
 
