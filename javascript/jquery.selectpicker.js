@@ -168,7 +168,7 @@ $.fn.selectpicker = function(_options) {
         .addClass(selectpickerItems.cssClass.item)
         .append(
           $("<a>")
-            .prop({href: "#"})
+            .prop({href: "javascript:void(0)"})
             .text(label)
             .on("click", function(){
               selectpickerWidget.form.set($(this).closest("li").data(selectpickerItems.dataKey));
