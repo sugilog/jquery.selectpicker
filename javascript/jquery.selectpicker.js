@@ -17,7 +17,14 @@ $.fn.selectpicker = function(_options) {
       values: [],
       searchWords: []
     },
-    dataKey: "selectpicker_option_value"
+    dataKey: "selectpicker_option_value",
+    cssClass: {
+      frame: "selectpicker_frame",
+      label: "selectpicker_label",
+      search: "selectpicker_search",
+      list: "selectpicker_list",
+      item: "selectpicker_item"
+    }
   };
 
   $(this).find("option").each(function(idx, val) {
@@ -45,8 +52,11 @@ $.fn.selectpicker = function(_options) {
         .after(
           $("<div>")
             .prop({id: this.baseId.replace("#", "")})
+            .addClass(selectpickerItems.cssClass.frame)
             .append(
-              $("<div>").prop({id: this.labelId.replace("#", "")})
+              $("<div>")
+                .prop({id: this.labelId.replace("#", "")})
+                .addClass(selectpickerItems.cssClass.label)
             )
         );
     }
@@ -110,7 +120,9 @@ $.fn.selectpicker = function(_options) {
       if (optionsBase.find(this.childId).length <= 0) {
         optionsBase
           .append(
-            $("<ul>").prop({id: this.childId.replace("#", "")}).css({"list-style-type": "none"})
+            $("<ul>")
+              .prop({id: this.childId.replace("#", "")})
+              .addClass(selectpickerItems.cssClass.list)
           );
       }
       else {
@@ -121,6 +133,7 @@ $.fn.selectpicker = function(_options) {
     },
     search: function() {
       return $("<input>")
+        .addClass(selectpickerItems.cssClass.search)
         .prop({
           type: "text",
           id:   this.inputId.replace("#", ""),
@@ -130,20 +143,15 @@ $.fn.selectpicker = function(_options) {
     },
     child: function(label, value) {
       return $("<li>")
-        .css({
-          width: "200px",
-          height: "20px"
-        })
         .data(selectpickerItems.dataKey, value)
+        .addClass(selectpickerItems.cssClass.item)
         .append(
           $("<a>")
-            .css({display: "block", width: "100%", height: "100%", "text-decoration": "none"})
             .prop({href: "#"})
             .text(label)
             .one("click", function(){
-              // FIXME: set value
-//              alert($(this).text());
               selectpickerWidget.form.set($(this).closest("li").data(selectpickerItems.dataKey));
+              selectpickerWidget.options.hide();
             })
         )
     },
@@ -173,7 +181,7 @@ $.fn.selectpicker = function(_options) {
   $(selectpickerWidget.options.inputId).observeField(0.5, function() {
     var query = $(this).val();
     var results = selectpickerWidget.options.find(query);
-    selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\"")} : results);
+    selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\""), value: ""} : results);
   });
 }
 

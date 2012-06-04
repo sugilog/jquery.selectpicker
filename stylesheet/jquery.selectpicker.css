@@ -1,0 +1,49 @@
+.selectpicker_frame
+{
+  width: 200px;
+  padding: 2px 10px;
+  border: 1px solid #999999;
+  border-radius: 5px;
+}
+.selectpicker_label
+{
+  width: 200px;
+  height: 25px;
+  line-height: 25px;
+}
+.selectpicker_search
+{
+  margin-top: 5px;
+  font-weight: bold;
+  width: 200px;
+  height: 25px;
+  line-height: 25px;
+}
+.selectpicker_list
+{
+  list-style-type: none;
+  padding: 0;
+  height: 100px;
+  overflow: scroll;
+}
+.selectpicker_item
+{
+  width: 100%;
+  height: 25px;
+  line-height: 25px;
+}
+.selectpicker_item > a,
+.selectpicker_item > a:hover,
+.selectpicker_item > a:visited
+{
+  text-decoration: none;
+  color: #666666;
+  text-align: center;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.selectpicker_item > a:hover
+{
+  background-color: #a4b639;
+}
