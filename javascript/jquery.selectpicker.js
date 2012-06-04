@@ -11,13 +11,13 @@ $.fn.selectpicker = function(_options) {
 
   var selectpickerItems = {
     select: {
-      id:   $(this).get(0).id,
+      id:   "#" + $(this).get(0).id,
       name: $(this).get(0).name,
-      selected: $(this).find(":selected"),
       labels: [],
       values: [],
       searchWords: []
-    }
+    },
+    dataKey: "selectpicker_option_value"
   };
 
   $(this).find("option").each(function(idx, val) {
@@ -36,8 +36,8 @@ $.fn.selectpicker = function(_options) {
 
   var selectpickerWidget = {};
   selectpickerWidget.picker = {
-    baseId:  "#selectpicker_" + selectpickerItems.select.id,
-    labelId: "#selectpicker_" + selectpickerItems.select.id + "_label",
+    baseId:  "#selectpicker_" + selectpickerItems.select.id.replace("#", ""),
+    labelId: "#selectpicker_" + selectpickerItems.select.id.replace("#", "") + "_label",
     append: function() {
       $(_this)
         .prop("disabled", true)
@@ -46,13 +46,35 @@ $.fn.selectpicker = function(_options) {
           $("<div>")
             .prop({id: this.baseId.replace("#", "")})
             .append(
-              $("<div>")
-                .prop({id: this.labelId.replace("#", "")})
-                .text(selectpickerItems.select.selected.text())
+              $("<div>").prop({id: this.labelId.replace("#", "")})
             )
         );
     }
-  }
+  };
+  selectpickerWidget.form = {
+    id: selectpickerWidget.picker.baseId + "_hidden",
+    append: function() {
+      $(selectpickerWidget.picker.baseId)
+        .append(
+          $("<input>")
+            .prop({
+              type: "hidden",
+              name: selectpickerItems.select.name,
+              id:   this.id.replace("#", "")
+            })
+        );
+      this.set($(selectpickerItems.select.id).val());
+    },
+    set: function(value) {
+      if (typeof value === "undefined") {
+        value = $(selectpickerItems.select.id).children(":first").val();
+      }
+
+      $(selectpickerItems.select.id).val(value);
+      $(this.id).val(value);
+      $(selectpickerWidget.picker.labelId).text($(selectpickerItems.select.id).find(":selected").text());
+    }
+  };
   selectpickerWidget.options = {
     append: function(options) {
       var that = this;
@@ -102,7 +124,8 @@ $.fn.selectpicker = function(_options) {
         .prop({
           type: "text",
           id:   this.inputId.replace("#", ""),
-          name: selectpickerItems.select.name, autocomplete: "off"
+          name: "_" + selectpickerItems.select.name,
+          autocomplete: "off"
         });
     },
     child: function(label, value) {
@@ -111,7 +134,7 @@ $.fn.selectpicker = function(_options) {
           width: "200px",
           height: "20px"
         })
-        .data({selectpicker_option_value: value})
+        .data(selectpickerItems.dataKey, value)
         .append(
           $("<a>")
             .css({display: "block", width: "100%", height: "100%", "text-decoration": "none"})
@@ -119,7 +142,8 @@ $.fn.selectpicker = function(_options) {
             .text(label)
             .one("click", function(){
               // FIXME: set value
-              alert($(this).text());
+//              alert($(this).text());
+              selectpickerWidget.form.set($(this).closest("li").data(selectpickerItems.dataKey));
             })
         )
     },
@@ -139,6 +163,7 @@ $.fn.selectpicker = function(_options) {
 
   selectpickerWidget.picker.append();
   selectpickerWidget.options.append(selectpickerWidget.options.find(""));
+  selectpickerWidget.form.append();
   selectpickerWidget.options.hide();
 
   $(selectpickerWidget.picker.labelId).on("click", function() {
