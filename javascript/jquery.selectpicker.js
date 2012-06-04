@@ -96,8 +96,8 @@ $.fn.selectpicker = function(_options) {
       $(this.id).val(value);
       $(selectpickerWidget.picker.labelId).text($(selectpickerItems.select.id).find(":selected").text());
 
-      if (typeof _options.change !== "undefined") {
-        _options.change.call();
+      if (typeof _options.onChange !== "undefined") {
+        _options.onChange.call();
       }
     }
   };
