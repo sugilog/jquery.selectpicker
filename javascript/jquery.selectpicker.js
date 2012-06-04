@@ -22,7 +22,9 @@ $.fn.selectpicker = function(_options) {
       label:  "selectpicker_label",
       search: "selectpicker_search",
       list:   "selectpicker_list",
-      item:   "selectpicker_item"
+      item:   "selectpicker_item",
+      open:   "selectpicker_label_open",
+      close:  "selectpicker_label_close"
     }
   };
 
@@ -95,12 +97,21 @@ $.fn.selectpicker = function(_options) {
     },
     hide: function() {
       $(this.baseId).hide();
+      $(selectpickerWidget.picker.labelId).removeClass(selectpickerItems.cssClass.close);
+      $(selectpickerWidget.picker.labelId).addClass(selectpickerItems.cssClass.open);
     },
     show: function() {
       $(this.baseId).show();
+      $(selectpickerWidget.picker.labelId).removeClass(selectpickerItems.cssClass.open);
+      $(selectpickerWidget.picker.labelId).addClass(selectpickerItems.cssClass.close);
     },
     toggle: function() {
-      $(this.baseId).toggle();
+      if ($(selectpickerWidget.picker.labelId).hasClass(selectpickerItems.cssClass.open)) {
+        this.show();
+      }
+      else {
+        this.hide();
+      }
     },
     baseId:  selectpickerWidget.picker.baseId + "_options",
     childId: selectpickerWidget.picker.baseId + "_options_child",

@@ -11,6 +11,18 @@
   height: 25px;
   line-height: 25px;
 }
+.selectpicker_label_open
+{
+  background-image: url("../images/selectpicker_open.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+.selectpicker_label_close
+{
+  background-image: url("../images/selectpicker_close.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+}
 .selectpicker_search
 {
   margin-top: 5px;
