@@ -13,15 +13,12 @@ $.fn.selectpicker = function(_options) {
     select: {
       id:   $(this).get(0).id,
       name: $(this).get(0).name,
-      selected: "",
+      selected: $(this).find(":selected"),
       labels: [],
       values: [],
       searchWords: []
-    },
-    picker: {}
+    }
   };
-
-  selectpickerItems.picker.id = "#selectpicker_" + selectpickerItems.select.id;
 
   $(this).find("option").each(function(idx, val) {
     var label = val.text;
@@ -37,99 +34,118 @@ $.fn.selectpicker = function(_options) {
     selectpickerItems.select.searchWords.push(searchWord);
   });
 
-  selectpickerItems.select.selected = $(this).find(":selected");
-
-  var selectpickerWidget = {
+  var selectpickerWidget = {};
+  selectpickerWidget.picker = {
+    baseId:  "#selectpicker_" + selectpickerItems.select.id,
+    labelId: "#selectpicker_" + selectpickerItems.select.id + "_label",
     append: function() {
       $(_this)
         .prop("disabled", true)
         .hide()
         .after(
           $("<div>")
-            .prop({id: selectpickerItems.picker.id.replace("#", "")})
-            .text(selectpickerItems.select.selected.text())
-        );
-    },
-    options: {
-      append: function(options) {
-        var that = this;
-        var base = that.base();
-
-        $(options).each(function(_, val) {
-          base.find(that.childId).append(that.child(val.label, val.value))
-        });
-      },
-      baseId:  selectpickerItems.picker.id + "_options",
-      childId: selectpickerItems.picker.id + "_options_child",
-      inputId: selectpickerItems.picker.id + "_options_search",
-      base: function() {
-        var optionsBase;
-
-        if ($(this.baseId).length <= 0) {
-          optionsBase = $("<div>").prop({id: this.baseId.replace("#", "")}).append(this.search());
-          $(selectpickerItems.picker.id).append(optionsBase);
-        }
-        else {
-          optionsBase = $(this.baseId);
-        }
-
-        if (optionsBase.find(this.childId).length <= 0) {
-          optionsBase
+            .prop({id: this.baseId.replace("#", "")})
             .append(
-              $("<ul>").prop({id: this.childId.replace("#", "")}).css({"list-style-type": "none"})
-            );
-        }
-        else {
-          optionsBase.find(this.childId).children().remove();
-        }
+              $("<div>")
+                .prop({id: this.labelId.replace("#", "")})
+                .text(selectpickerItems.select.selected.text())
+            )
+        );
+    }
+  }
+  selectpickerWidget.options = {
+    append: function(options) {
+      var that = this;
+      var base = that.base();
 
-        return optionsBase;
-      },
-      search: function() {
-        return $("<input>")
-          .prop({
-            type: "text",
-            id:   this.inputId.replace("#", ""),
-            name: selectpickerItems.select.name, autocomplete: "off"
-          });
-      },
-      child: function(label, value) {
-        return $("<li>")
-          .css({
-            width: "200px",
-            height: "20px"
-          })
-          .data({selectpicker_option_value: value})
-          .append(
-            $("<a>")
-              .css({display: "block", width: "100%", height: "100%", "text-decoration": "none"})
-              .prop({href: "#"})
-              .text(label)
-              .one("click", function(){
-                // FIXME: set value
-                alert($(this).text());
-              })
-          )
-      },
-      find: function(query) {
-        var regex = new RegExp(query);
+      $(options).each(function(_, val) {
+        base.find(that.childId).append(that.child(val.label, val.value))
+      });
+    },
+    hide: function() {
+      $(this.baseId).hide();
+    },
+    show: function() {
+      $(this.baseId).show();
+    },
+    toggle: function() {
+      $(this.baseId).toggle();
+    },
+    baseId:  selectpickerWidget.picker.baseId + "_options",
+    childId: selectpickerWidget.picker.baseId + "_options_child",
+    inputId: selectpickerWidget.picker.baseId + "_options_search",
+    base: function() {
+      var optionsBase;
 
-        return $(selectpickerItems.select.searchWords).map(function(idx, val){
-          if (regex.test(val)) {
-            return {
-              value: selectpickerItems.select.values[idx],
-              label: selectpickerItems.select.labels[idx]
-            };
-          }
-        }).toArray();
+      if ($(this.baseId).length <= 0) {
+        optionsBase = $("<div>").prop({id: this.baseId.replace("#", "")}).append(this.search());
+        $(selectpickerWidget.picker.baseId).append(optionsBase);
       }
+      else {
+        optionsBase = $(this.baseId);
+      }
+
+      if (optionsBase.find(this.childId).length <= 0) {
+        optionsBase
+          .append(
+            $("<ul>").prop({id: this.childId.replace("#", "")}).css({"list-style-type": "none"})
+          );
+      }
+      else {
+        optionsBase.find(this.childId).children().remove();
+      }
+
+      return optionsBase;
+    },
+    search: function() {
+      return $("<input>")
+        .prop({
+          type: "text",
+          id:   this.inputId.replace("#", ""),
+          name: selectpickerItems.select.name, autocomplete: "off"
+        });
+    },
+    child: function(label, value) {
+      return $("<li>")
+        .css({
+          width: "200px",
+          height: "20px"
+        })
+        .data({selectpicker_option_value: value})
+        .append(
+          $("<a>")
+            .css({display: "block", width: "100%", height: "100%", "text-decoration": "none"})
+            .prop({href: "#"})
+            .text(label)
+            .one("click", function(){
+              // FIXME: set value
+              alert($(this).text());
+            })
+        )
+    },
+    find: function(query) {
+      var regex = new RegExp(query);
+
+      return $(selectpickerItems.select.searchWords).map(function(idx, val){
+        if (regex.test(val)) {
+          return {
+            value: selectpickerItems.select.values[idx],
+            label: selectpickerItems.select.labels[idx]
+          };
+        }
+      }).toArray();
     }
   };
 
-  selectpickerWidget.append();
+  selectpickerWidget.picker.append();
   selectpickerWidget.options.append(selectpickerWidget.options.find(""));
+  selectpickerWidget.options.hide();
 
-  $(selectpickerWidget.options.inputId).observeField(0.5, function(){
+  $(selectpickerWidget.picker.labelId).on("click", function() {
+    selectpickerWidget.options.toggle();
+  });
+
+  $(selectpickerWidget.options.inputId).observeField(0.5, function() {
     var query = $(this).val();
     var results = selectpickerWidget.options.find(query);
     selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\"")} : results);
