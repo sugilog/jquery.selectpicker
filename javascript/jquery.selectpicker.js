@@ -163,7 +163,6 @@ $.fn.selectpicker = function(_options) {
         .prop({
           type: "text",
           id:   this.inputId.replace("#", ""),
-          name: "_" + selectpickerItems.select.name,
           autocomplete: "off"
         });
     },
