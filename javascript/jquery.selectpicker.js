@@ -174,7 +174,7 @@ $.fn.selectpicker = function(_options) {
           $("<a>")
             .prop({href: "javascript:void(0)"})
             .text(label)
-            .on("click", function(){
+            .on("click.selectpicker", function(){
               selectpickerWidget.form.set($(this).closest("li").data(selectpickerItems.dataKey));
               selectpickerWidget.options.hide();
             })
@@ -199,7 +199,7 @@ $.fn.selectpicker = function(_options) {
   selectpickerWidget.form.append();
   selectpickerWidget.options.hide();
 
-  $(selectpickerWidget.picker.labelId).on("click", function() {
+  $(selectpickerWidget.picker.labelId).on("click.selectpicker", function() {
     selectpickerWidget.options.toggle();
   });
 
@@ -243,7 +243,7 @@ $.fn.selectpicker = function(_options) {
     }
   });
 
-  $(selectpickerWidget.picker.frameId).outerOn("click", function(){
+  $(selectpickerWidget.picker.frameId).outerOn("click.selectpicker", function(){
     selectpickerWidget.options.hide();
   });
 }
