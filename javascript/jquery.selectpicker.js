@@ -111,12 +111,14 @@ $.fn.selectpicker = function(_options) {
       });
     },
     hide: function() {
+      $(selectpickerWidget.picker.frameId).css({zIndex: 100});
       $(this.baseId).hide();
       $(selectpickerWidget.picker.labelId).removeClass(selectpickerItems.cssClass.close);
       $(selectpickerWidget.picker.labelId).addClass(selectpickerItems.cssClass.open);
     },
     show: function() {
       $(this.baseId).show();
+      $(selectpickerWidget.picker.frameId).css({zIndex: 999});
       $(this.inputId).focus();
       $(selectpickerWidget.picker.labelId).removeClass(selectpickerItems.cssClass.open);
       $(selectpickerWidget.picker.labelId).addClass(selectpickerItems.cssClass.close);
