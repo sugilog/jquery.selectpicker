@@ -5,8 +5,22 @@ jquery plugin to change select box to searchable select box
 
 options
 ------------------------------------------------------------
-under construction
+- onChange
+  - [function] onChange callback.
+   - callback specification
+     - "this" has selectpicker caller
+     - "arguments" have "value" and "label" of changed (selected) item.
 
 Example
 ------------------------------------------------------------
-under construction
+
+- select#select_prefecture
+
+JavaScript:
+
+    $("#select_prefecture").selectpicker({
+      onChange: function(value, label) {
+        console.log(this);
+        console.log(label + ": " + value);
+      }
+    });

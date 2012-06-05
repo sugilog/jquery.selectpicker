@@ -96,13 +96,14 @@ $.fn.selectpicker = function(_options) {
       if (typeof value === "undefined") {
         value = $(selectpickerItems.select.id).children(":first").val();
       }
+      var label = $(selectpickerItems.select.id).find(":selected").text()
 
       $(selectpickerItems.select.id).val(value);
       $(this.id).val(value);
-      $(selectpickerWidget.picker.labelId).text($(selectpickerItems.select.id).find(":selected").text());
+      $(selectpickerWidget.picker.labelId).text(label);
 
       if (typeof _options.onChange !== "undefined") {
-        _options.onChange.call();
+        _options.onChange.apply(_this, [value, label]);
       }
     }
   };

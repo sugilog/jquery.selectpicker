@@ -83,8 +83,9 @@
     <script type="text/javascript">
     <!--
     $("#select_prefecture").selectpicker({
-      onChange: function() {
-        console.log("change");
+      onChange: function(value, label) {
+        console.log(this);
+        console.log(label + ": " + value);
       }
     });
 
