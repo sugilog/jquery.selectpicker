@@ -244,6 +244,7 @@ $.fn.selectpicker = function(_options) {
   });
 
   // for multiple selectpickers
+  $("." + selectpickerItems.cssClass.base).outerOff("click.selectpicker");
   $("." + selectpickerItems.cssClass.base).outerOn("click.selectpicker", function(e){
     selectpickerWidget.options.hide();
   });
