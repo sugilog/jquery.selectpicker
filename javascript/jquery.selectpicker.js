@@ -243,12 +243,12 @@ $.fn.selectpicker = function(_options) {
     }
   });
 
-  $(selectpickerWidget.picker.frameId).outerOn("click.selectpicker", function(){
+  $(selectpickerWidget.picker.frameId).outerOn("click.selectpicker", function(e){
     selectpickerWidget.options.hide();
   });
 }
 
-if (typeof $.fn.outerOn === "undefined" &&& $.fn.outerOff === "undefined") {
+if (typeof $.fn.outerOn === "undefined" && typeof $.fn.outerOff === "undefined") {
   $.fn.outerOn = function() {
     var args = $(arguments).toArray();
     var _this = this;
@@ -264,7 +264,8 @@ if (typeof $.fn.outerOn === "undefined" &&& $.fn.outerOff === "undefined") {
     console.log(handleEvent);
     $(selector).on(handleEvent, function(e) {
       if ($(e.target).closest(_this).length === 0) {
-        callback.apply(e);
+        e.target = _this.get(0);
+        callback.apply(_this, [e]);
       }
     });
   };
