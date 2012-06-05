@@ -242,8 +242,43 @@ $.fn.selectpicker = function(_options) {
       }
     }
   });
+
+  $(selectpickerWidget.picker.frameId).outerOn("click", function(){
+    selectpickerWidget.options.hide();
+  });
 }
 
+$.fn.outerOn = function() {
+  var args = $(arguments).toArray();
+  var _this = this;
+  var handleEvent = (args.shift() + [".outer" + "_" + _this.get(0).id].join());
+  var selector = window;
+
+  if (typeof args[0] !== "function") {
+    selector = args.shift();
+  }
+
+  var callback = args.shift();
+
+  console.log(handleEvent);
+  $(selector).on(handleEvent, function(e) {
+    if ($(e.target).closest(_this).length === 0) {
+      callback.apply(e);
+    }
+  });
+};
+$.fn.outerOff = function() {
+  var args = $(arguments).toArray();
+  var _this = this;
+  var handleEvent = (args.shift() + [".outer" + "_" + _this.get(0).id].join());
+  var selector = window;
+
+  if (typeof args[0] !== "undefined") {
+    selector = args.shift();
+  }
+
+  $(selector).off(handleEvent);
+}
 
 if (typeof $.fn.observeField === "undefined") {
   // jquery.observe_field
