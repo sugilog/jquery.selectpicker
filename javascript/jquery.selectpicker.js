@@ -4,6 +4,11 @@
 */
 (function($) {
 
+$.fn.selectpickerOptionsHide = function() {
+  this.selectpicker({
+    callWidget: "options.hide()"
+  });
+}
 $.fn.selectpicker = function(_options) {
   // prepare
   var _this = this;
@@ -19,14 +24,14 @@ $.fn.selectpicker = function(_options) {
     },
     dataKey: "selectpicker_option_value",
     cssClass: {
-      base:   "selectpicker_base",
-      frame:  "selectpicker_frame",
-      label:  "selectpicker_label",
-      search: "selectpicker_search",
-      list:   "selectpicker_list",
-      item:   "selectpicker_item",
-      open:   "selectpicker_label_open",
-      close:  "selectpicker_label_close",
+      base:    "selectpicker_base",
+      frame:   "selectpicker_frame",
+      label:   "selectpicker_label",
+      search:  "selectpicker_search",
+      list:    "selectpicker_list",
+      item:    "selectpicker_item",
+      open:    "selectpicker_label_open",
+      close:   "selectpicker_label_close",
       current: "selectpicker_current_pick"
     }
   };
@@ -196,60 +201,66 @@ $.fn.selectpicker = function(_options) {
     }
   };
 
-  selectpickerWidget.picker.append();
-  selectpickerWidget.options.append(selectpickerWidget.options.find(""));
-  selectpickerWidget.form.append();
-  selectpickerWidget.options.hide();
-
-  $(selectpickerWidget.picker.labelId).on("click.selectpicker", function() {
-    selectpickerWidget.options.toggle();
-  });
-
-  $(selectpickerWidget.options.inputId).observeField(0.5, function() {
-    var query = $(this).val();
-    var results = selectpickerWidget.options.find(query);
-    selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\""), value: ""} : results);
-  });
-
-  $(selectpickerWidget.options.inputId).keydown(function(e) {
-    if (e.keyCode == "13" || e.keyCode == "38" || e.keyCode == "40") {
-      var currentPick;
-
-      $(selectpickerWidget.options.childId).find("li").each(function() {
-        if ($(this).hasClass(selectpickerItems.cssClass.current)) {
-          currentPick = $(this);
-          return;
-        }
-      });
-
-      if (typeof currentPick === "undefined") {
-        currentPick = $(selectpickerWidget.options.childId).children(":first");
-        currentPick.addClass(selectpickerItems.cssClass.current);
-      }
-
-      if (e.keyCode == "13") {
-        selectpickerWidget.form.set(currentPick.data(selectpickerItems.dataKey));
-        selectpickerWidget.options.hide();
-        return false;
-      }
-      else {
-        var target = ((e.keyCode == "38") ? currentPick.prev() : currentPick.next());
-
-        if (target.length > 0) {
-          target.addClass(selectpickerItems.cssClass.current);
-          currentPick.removeClass(selectpickerItems.cssClass.current);
-          var scrollOption = {scrollTop: (target.offset().top - target.parent().children(":first").offset().top)};
-          target.parent().animate(scrollOption, "fast");
-        }
-      }
-    }
-  });
-
-  // for multiple selectpickers
-  $("." + selectpickerItems.cssClass.base).outerOff("click.selectpicker");
-  $("." + selectpickerItems.cssClass.base).outerOn("click.selectpicker", function(e){
+  if (typeof _options.callWidget !== "undefined") {
+    eval("selectpickerWidget." + _options.callWidget);
+  }
+  else {
+    selectpickerWidget.picker.append();
+    selectpickerWidget.options.append(selectpickerWidget.options.find(""));
+    selectpickerWidget.form.append();
     selectpickerWidget.options.hide();
-  });
+
+    $(selectpickerWidget.picker.labelId).on("click.selectpicker", function() {
+      selectpickerWidget.options.toggle();
+    });
+
+    $(selectpickerWidget.options.inputId).observeField(0.5, function() {
+      var query = $(this).val();
+      var results = selectpickerWidget.options.find(query);
+      selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\""), value: ""} : results);
+    });
+
+    $(selectpickerWidget.options.inputId).keydown(function(e) {
+      if (e.keyCode == "13" || e.keyCode == "38" || e.keyCode == "40") {
+        var currentPick;
+
+        $(selectpickerWidget.options.childId).find("li").each(function() {
+          if ($(this).hasClass(selectpickerItems.cssClass.current)) {
+            currentPick = $(this);
+            return;
+          }
+        });
+
+        if (typeof currentPick === "undefined") {
+          currentPick = $(selectpickerWidget.options.childId).children(":first");
+          currentPick.addClass(selectpickerItems.cssClass.current);
+        }
+
+        if (e.keyCode == "13") {
+          selectpickerWidget.form.set(currentPick.data(selectpickerItems.dataKey));
+          selectpickerWidget.options.hide();
+          return false;
+        }
+        else {
+          var target = ((e.keyCode == "38") ? currentPick.prev() : currentPick.next());
+
+          if (target.length > 0) {
+            target.addClass(selectpickerItems.cssClass.current);
+            currentPick.removeClass(selectpickerItems.cssClass.current);
+            var scrollOption = {scrollTop: (target.offset().top - target.parent().children(":first").offset().top)};
+            target.parent().animate(scrollOption, "fast");
+          }
+        }
+      }
+    });
+
+    $("." + selectpickerItems.cssClass.base).outerOff("click.selectpicker");
+    $("." + selectpickerItems.cssClass.base).outerOn("click.selectpicker", function(e){
+      $(this).each(function(){
+        $(this).prev().selectpickerOptionsHide();
+      });
+    });
+  }
 }
 
 if (typeof $.fn.outerOn === "undefined" && typeof $.fn.outerOff === "undefined") {
@@ -267,7 +278,6 @@ if (typeof $.fn.outerOn === "undefined" && typeof $.fn.outerOff === "undefined")
 
     $(selector).on(handleEvent, function(e) {
       if ($(e.target).closest(_this).length === 0) {
-        e.target = _this.get(0);
         callback.apply(_this, [e]);
       }
     });
