@@ -243,7 +243,8 @@ $.fn.selectpicker = function(_options) {
     }
   });
 
-  $(selectpickerWidget.picker.frameId).outerOn("click.selectpicker", function(e){
+  // for multiple selectpickers
+  $("." + selectpickerItems.cssClass.base).outerOn("click.selectpicker", function(e){
     selectpickerWidget.options.hide();
   });
 }
@@ -253,7 +254,7 @@ if (typeof $.fn.outerOn === "undefined" && typeof $.fn.outerOff === "undefined")
     var args = $(arguments).toArray();
     var _this = this;
     var handleEvent = (args.shift() + [".outer" + "_" + _this.get(0).id].join());
-    var selector = window;
+    var selector = "body";
 
     if (typeof args[0] !== "function") {
       selector = args.shift();
@@ -261,7 +262,6 @@ if (typeof $.fn.outerOn === "undefined" && typeof $.fn.outerOff === "undefined")
 
     var callback = args.shift();
 
-    console.log(handleEvent);
     $(selector).on(handleEvent, function(e) {
       if ($(e.target).closest(_this).length === 0) {
         e.target = _this.get(0);
@@ -274,7 +274,7 @@ if (typeof $.fn.outerOn === "undefined" && typeof $.fn.outerOff === "undefined")
     var args = $(arguments).toArray();
     var _this = this;
     var handleEvent = (args.shift() + [".outer" + "_" + _this.get(0).id].join());
-    var selector = window;
+    var selector = "body";
 
     if (typeof args[0] !== "undefined") {
       selector = args.shift();
