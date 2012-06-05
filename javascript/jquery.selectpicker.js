@@ -181,7 +181,7 @@ $.fn.selectpicker = function(_options) {
         )
     },
     find: function(query) {
-      var regex = new RegExp(query);
+      var regex = new RegExp(query, "i");
 
       return $(selectpickerItems.select.searchWords).map(function(idx, val){
         if (regex.test(val)) {
