@@ -1,15 +1,17 @@
-selectpicker
+jquery.selectpicker
 ========================================
 
 jquery plugin to change select box to searchable select box
 
-options
+
+Options
 ------------------------------------------------------------
 - onChange
   - [function] onChange callback.
    - callback specification
      - "this" has selectpicker caller
      - "arguments" have "value" and "label" of changed (selected) item.
+
 
 Example
 ------------------------------------------------------------
@@ -24,3 +26,8 @@ JavaScript:
         console.log(label + ": " + value);
       }
     });
+
+
+Licence
+------------------------------------------------------------
+jquery.selectpicker is licenced under the MIT License.
