@@ -4,11 +4,15 @@
 */
 (function($) {
 
-$.fn.selectpickerOptionsHide = function() {
-  this.selectpicker({
-    callWidget: "options.hide()"
-  });
-}
+$.fn.selectpickerOptionsClose = function() {
+  this.selectpicker({ callWidget: "hide" });
+};
+$.fn.selectpickerOptionsOpen = function() {
+  this.selectpicker({ callWidget: "show" });
+};
+$.fn.selectpickerOptionsToggle = function() {
+  this.selectpicker({ callWidget: "toggle" });
+};
 $.fn.selectpicker = function(_options) {
   // prepare
   var _this = this;
@@ -203,7 +207,7 @@ $.fn.selectpicker = function(_options) {
   };
 
   if (typeof _options.callWidget !== "undefined") {
-    eval("selectpickerWidget." + _options.callWidget);
+    selectpickerWidget.options[_options.callWidget]();
   }
   else {
     selectpickerWidget.picker.append();
