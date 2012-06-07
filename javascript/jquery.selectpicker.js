@@ -262,7 +262,7 @@ $.fn.selectpicker = function(_options) {
     $("." + selectpickerItems.cssClass.base).outerOff("click.selectpicker");
     $("." + selectpickerItems.cssClass.base).outerOn("click.selectpicker", function(e){
       $(this).each(function(){
-        $(this).prev().selectpickerOptionsHide();
+        $(this).prev().selectpickerOptionsClose();
       });
     });
   }
