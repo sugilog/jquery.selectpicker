@@ -100,9 +100,10 @@ $.fn.selectpicker = function(_options) {
       if (typeof value === "undefined") {
         value = $(selectpickerItems.select.id).children(":first").val();
       }
+      $(selectpickerItems.select.id).val(value);
+
       var label = $(selectpickerItems.select.id).find(":selected").text()
 
-      $(selectpickerItems.select.id).val(value);
       $(this.id).val(value);
       $(selectpickerWidget.picker.labelId).text(label);
 
