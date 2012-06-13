@@ -57,6 +57,7 @@ $.fn.selectpicker = function(_options) {
   });
 
   var selectpickerWidget = {};
+  selectpickerWidget.loaded = false;
   selectpickerWidget.picker = {
     baseId:  "#selectpicker_" + selectpickerItems.select.id.replace("#", ""),
     frameId: "#selectpicker_" + selectpickerItems.select.id.replace("#", "") + "_frame",
@@ -109,8 +110,17 @@ $.fn.selectpicker = function(_options) {
       $(this.id).val(value);
       $(selectpickerWidget.picker.labelId).text(label);
 
-      if (typeof _options.onChange !== "undefined") {
-        _options.onChange.apply(_this, [value, label]);
+      if (selectpickerWidget.loaded) {
+        if (typeof _options.onChange !== "undefined") {
+          _options.onChange.apply(_this, [value, label]);
+        }
+      }
+      else {
+        if (typeof _options.onLoad !== "undefined") {
+          _options.onLoad.apply(_this, [value, label]);
+        }
+
+        selectpickerWidget.loaded = true;
       }
     }
   };

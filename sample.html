@@ -80,16 +80,30 @@
       </select>
     </div>
 
+    <div>
+      <select id="3rd_select" name="other_select">
+        <option value="-">3番目</option>
+      </select>
+    </div>
+
     <script type="text/javascript">
     <!--
     $("#select_prefecture").selectpicker({
       onChange: function(value, label) {
+        console.log("changed")
+        console.log(this);
+        console.log(label + ": " + value);
+      },
+      onLoad: function(value, label) {
+        console.log("loaded")
         console.log(this);
         console.log(label + ": " + value);
       }
     });
 
     $("#other_select").selectpicker();
+
+    $("#3rd_select").selectpicker();
     -->
     </script>
   </body>
