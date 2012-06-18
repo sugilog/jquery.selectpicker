@@ -142,7 +142,7 @@ $.fn.selectpicker = function(_options) {
     show: function() {
       $(this.baseId).show();
       $(selectpickerWidget.picker.frameId).css({zIndex: 999});
-      $(this.inputId).focus();
+      $(this.inputId).focus().select();
       $(selectpickerWidget.picker.labelId).removeClass(selectpickerItems.cssClass.open);
       $(selectpickerWidget.picker.labelId).addClass(selectpickerItems.cssClass.close);
     },
