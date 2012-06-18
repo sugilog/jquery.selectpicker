@@ -132,6 +132,8 @@ $.fn.selectpicker = function(_options) {
       $(options).each(function(_, val) {
         base.find(that.childId).append(that.child(val.label, val.value))
       });
+
+      selectpickerWidget.options.setCurrentPick();
     },
     hide: function() {
       $(selectpickerWidget.picker.frameId).css({zIndex: 100});
@@ -145,6 +147,8 @@ $.fn.selectpicker = function(_options) {
       $(this.inputId).focus().select();
       $(selectpickerWidget.picker.labelId).removeClass(selectpickerItems.cssClass.open);
       $(selectpickerWidget.picker.labelId).addClass(selectpickerItems.cssClass.close);
+
+      selectpickerWidget.options.setCurrentPick();
     },
     toggle: function() {
       if ($(selectpickerWidget.picker.labelId).hasClass(selectpickerItems.cssClass.open)) {
@@ -216,6 +220,29 @@ $.fn.selectpicker = function(_options) {
           };
         }
       }).toArray();
+    },
+    findCurrentPick: function() {
+      var currentPick;
+
+      $(selectpickerWidget.options.childId).find("li").each(function() {
+        if ($(this).hasClass(selectpickerItems.cssClass.current)) {
+          currentPick = $(this);
+          return;
+        }
+      });
+
+      return currentPick;
+    },
+    setCurrentPick: function(currentPick) {
+      if (typeof currentPick === "undefined") {
+        currentPick = selectpickerWidget.options.findCurrentPick() || $(selectpickerWidget.options.childId).children(":first");
+      }
+      currentPick.addClass(selectpickerItems.cssClass.current);
+
+      var scrollOption = {scrollTop: (currentPick.offset().top - currentPick.parent().children(":first").offset().top)};
+      currentPick.parent().animate(scrollOption, "fast");
+
+      return currentPick;
     }
   };
 
@@ -240,19 +267,7 @@ $.fn.selectpicker = function(_options) {
 
     $(selectpickerWidget.options.inputId).keydown(function(e) {
       if (e.keyCode == "13" || e.keyCode == "38" || e.keyCode == "40") {
-        var currentPick;
-
-        $(selectpickerWidget.options.childId).find("li").each(function() {
-          if ($(this).hasClass(selectpickerItems.cssClass.current)) {
-            currentPick = $(this);
-            return;
-          }
-        });
-
-        if (typeof currentPick === "undefined") {
-          currentPick = $(selectpickerWidget.options.childId).children(":first");
-          currentPick.addClass(selectpickerItems.cssClass.current);
-        }
+        var currentPick = selectpickerWidget.options.setCurrentPick(selectpickerWidget.options.findCurrentPick());
 
         if (e.keyCode == "13") {
           selectpickerWidget.form.set(currentPick.data(selectpickerItems.dataKey));
@@ -263,10 +278,8 @@ $.fn.selectpicker = function(_options) {
           var target = ((e.keyCode == "38") ? currentPick.prev() : currentPick.next());
 
           if (target.length > 0) {
-            target.addClass(selectpickerItems.cssClass.current);
+            selectpickerWidget.options.setCurrentPick(target);
             currentPick.removeClass(selectpickerItems.cssClass.current);
-            var scrollOption = {scrollTop: (target.offset().top - target.parent().children(":first").offset().top)};
-            target.parent().animate(scrollOption, "fast");
           }
         }
       }
