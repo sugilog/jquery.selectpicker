@@ -1,5 +1,5 @@
 /*!
- * jquery.selectpicker v0.0.1
+ * jquery.selectpicker v0.0.2
  *
  * Copyright (c) 2012 Takayuki Sugita, http://github.com/sugilog
  * Released under the MIT License
@@ -24,13 +24,15 @@
 }
 .selectpicker_label_open
 {
-  background-image: url("../images/selectpicker_open.png");
+  /* background-image: url("../images/selectpicker_open.png"); */
+  background-image: url("../images/selectpicker_toggle.png");
   background-repeat: no-repeat;
   background-position: right center;
 }
 .selectpicker_label_close
 {
-  background-image: url("../images/selectpicker_close.png");
+  /* background-image: url("../images/selectpicker_close.png"); */
+  background-image: url("../images/selectpicker_toggle.png");
   background-repeat: no-repeat;
   background-position: right center;
 }
