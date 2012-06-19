@@ -46,7 +46,7 @@ $.fn.selectpicker = function(_options) {
       close:   "selectpicker_label_close",
       current: "selectpicker_current_pick"
     },
-    scrollDuration: (_options.scrollDuration || "fast")
+    scrollDuration: (_options.scrollDuration || 10)
   };
 
   $(this).find("option").each(function(idx, val) {

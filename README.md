@@ -21,7 +21,7 @@ Options
   </dd>
   <dt>scrollDuration</dt>
   <dd>
-    [Number or String] duration; like 10, 100 or "fast", ..
+    [Number or String] duration; like 10, 100 or "fast", .. (default: 10)
   </dd>
 </dl>
 
