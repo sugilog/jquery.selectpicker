@@ -63,7 +63,6 @@
       <option value="47" data-kana="おきなわけん,okinawa">沖縄県</option>
     </select>
     </p>
-    </form>
     <br />
     <div>
       Choose prefecture of Japan
@@ -84,10 +83,36 @@
     <br />
 
     <div>
-      <select id="3rd_select" name="other_select">
+      <select id="toggle_select" name="toggle_select">
         <option value="-">3番目</option>
       </select>
     </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div>
+      try to toggle selectpicker
+    </div>
+
+    <label>
+      <input type="checkbox" id="toggle_selectpicker" checked/>
+      enable?
+    </label>
+
+    <br />
+    <br />
+    <br />
+
+    <input type="submit" value="test submit">
+
+    </form>
 
     <script type="text/javascript">
     <!--
@@ -106,7 +131,11 @@
 
     $("#other_select").selectpicker();
 
-    $("#3rd_select").selectpicker();
+    $("#toggle_select").selectpicker();
+
+    $("#toggle_selectpicker").on("click", function(){
+      $("#toggle_select")["selectpicker" + ($(this).is(":checked") ? "Enable" : "Disable")]();
+    });
     -->
     </script>
   </body>

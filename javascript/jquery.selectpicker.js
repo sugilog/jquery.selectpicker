@@ -15,6 +15,12 @@ $.fn.selectpickerOptionsOpen = function() {
 $.fn.selectpickerOptionsToggle = function() {
   this.selectpicker({ callWidget: "toggle" });
 };
+$.fn.selectpickerEnable = function() {
+  this.selectpicker({ callWidget: "enable" });
+};
+$.fn.selectpickerDisable = function() {
+  this.selectpicker({ callWidget: "disable" });
+};
 $.fn.selectpicker = function(_options) {
   // prepare
   var _this = this;
@@ -158,6 +164,19 @@ $.fn.selectpicker = function(_options) {
         this.hide();
       }
     },
+    disable: function() {
+      $(_this).selectpickerOptionsClose();
+      $(selectpickerWidget.form.id).prop("disabled", true);
+      $(selectpickerWidget.picker.labelId).off("click.selectpicker");
+      $(selectpickerWidget.picker.labelId).css({opacity: 0.5});
+    },
+    enable: function() {
+      $(selectpickerWidget.form.id).prop("disabled", false);
+      $(selectpickerWidget.picker.labelId).on("click.selectpicker", function() {
+        selectpickerWidget.options.toggle();
+      });
+      $(selectpickerWidget.picker.labelId).css({opacity: 1});
+    },
     baseId:  selectpickerWidget.picker.frameId + "_options",
     childId: selectpickerWidget.picker.frameId + "_options_child",
     inputId: selectpickerWidget.picker.frameId + "_options_search",
@@ -255,9 +274,7 @@ $.fn.selectpicker = function(_options) {
     selectpickerWidget.form.append();
     selectpickerWidget.options.hide();
 
-    $(selectpickerWidget.picker.labelId).on("click.selectpicker", function() {
-      selectpickerWidget.options.toggle();
-    });
+    $(_this).selectpickerEnable();
 
     $(selectpickerWidget.options.inputId).observeField(0.5, function() {
       var query = $(this).val();
