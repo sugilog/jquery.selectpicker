@@ -31,15 +31,15 @@ JavaScript:
 Utility Methods
 ------------------------------------------------------------
 
-- make enable selectpicker widget
+- make enable selectpicker widget:
 
     $(selector).selectpickerEnable();
 
-- make disable selectpicker widget
+- make disable selectpicker widget:
 
     $(selector).selectpickerDisable();
 
-- toggle open and close the options
+- toggle open and close the options:
 
     $(selector).selectpickerOptionsToggle();
 
