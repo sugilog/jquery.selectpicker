@@ -75,7 +75,27 @@
 
     <div>
       <select id="other_select" name="other_select">
-        <option value="-">その他</option>
+        <option value="0">jquery</option>
+        <option value="1">selectpicker</option>
+        <option value="2">widget</option>
+        <option value="3">option</option>
+        <option value="4">scroll</option>
+        <option value="5">duration</option>
+        <option value="6">10</option>
+        <option value="7">jquery</option>
+        <option value="8">selectpicker</option>
+        <option value="9">widget</option>
+        <option value="10">option</option>
+        <option value="11">scroll</option>
+        <option value="12">duration</option>
+        <option value="13">10</option>
+        <option value="14">jquery</option>
+        <option value="15">selectpicker</option>
+        <option value="16">widget</option>
+        <option value="17">option</option>
+        <option value="18">scroll</option>
+        <option value="19">duration</option>
+        <option value="20">10</option>
       </select>
     </div>
 
@@ -129,7 +149,9 @@
       }
     });
 
-    $("#other_select").selectpicker();
+    $("#other_select").selectpicker({
+      scrollDuration: 10
+    });
 
     $("#toggle_select").selectpicker();
 

@@ -13,6 +13,16 @@ Options
 
     "this" has selectpicker caller, "arguments" have "value" and "label" of changed (selected) item.
   </dd>
+  <dt>onLoad</dt>
+  <dd>
+    [function] onLoad callback.
+
+    "this" has selectpicker caller, "arguments" have "value" and "label" of changed (selected) item.
+  </dd>
+  <dt>scrollDuration</dt>
+  <dd>
+    [Number or String] duration; like 10, 100 or "fast", ..
+  </dd>
 </dl>
 
 

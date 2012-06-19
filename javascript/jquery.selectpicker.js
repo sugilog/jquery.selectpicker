@@ -45,7 +45,8 @@ $.fn.selectpicker = function(_options) {
       open:    "selectpicker_label_open",
       close:   "selectpicker_label_close",
       current: "selectpicker_current_pick"
-    }
+    },
+    scrollDuration: (_options.scrollDuration || "fast")
   };
 
   $(this).find("option").each(function(idx, val) {
@@ -259,7 +260,7 @@ $.fn.selectpicker = function(_options) {
       currentPick.addClass(selectpickerItems.cssClass.current);
 
       var scrollOption = {scrollTop: (currentPick.offset().top - currentPick.parent().children(":first").offset().top)};
-      currentPick.parent().animate(scrollOption, "fast");
+      currentPick.parent().animate(scrollOption, selectpickerItems.scrollDuration);
 
       return currentPick;
     }
