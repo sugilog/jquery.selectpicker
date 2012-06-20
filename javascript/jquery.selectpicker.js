@@ -212,8 +212,10 @@ $.fn.selectpicker = function(_options) {
         .prop({
           type: "text",
           id:   this.inputId.replace("#", ""),
-          autocomplete: "off"
-        });
+          "autocomplete": "off"
+        })
+        .attr("autocomplete", "off");
+        // for IE bug; attr autocomplete is not work for html attributes; only autocomplete??
     },
     child: function(label, value) {
       return $("<li>")
