@@ -259,10 +259,13 @@ $.fn.selectpicker = function(_options) {
       if (typeof currentPick === "undefined") {
         currentPick = selectpickerWidget.options.findCurrentPick() || $(selectpickerWidget.options.childId).children(":first");
       }
-      currentPick.addClass(selectpickerItems.cssClass.current);
 
-      var scrollOption = {scrollTop: (currentPick.offset().top - currentPick.parent().children(":first").offset().top)};
-      currentPick.parent().animate(scrollOption, selectpickerItems.scrollDuration);
+      if (currentPick.length != 0) {
+        currentPick.addClass(selectpickerItems.cssClass.current);
+
+        var scrollOption = {scrollTop: (currentPick.offset().top - currentPick.parent().children(":first").offset().top)};
+        currentPick.parent().animate(scrollOption, selectpickerItems.scrollDuration);
+      }
 
       return currentPick;
     }
