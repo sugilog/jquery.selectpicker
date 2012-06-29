@@ -45,11 +45,15 @@
 {
   margin-top: 5px;
   margin-bottom: 5px;
+  padding-left: 15px;
   font-weight: bold;
   width: 250px;
   height: 18px;
   line-height: 18px;
-  border: 1px solid #cccccc;
+  border: 1px solid #aaaaaa;
+  background-image: url("../images/selectpicker_search.png");
+  background-repeat: no-repeat;
+  background-position: left center;
 }
 .selectpicker_list
 {
