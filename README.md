@@ -7,17 +7,35 @@ jquery plugin to change select box to searchable select box
 Options
 ------------------------------------------------------------
 <dl>
-  <dt>onChange</dt>
+  <dt>onPick</dt>
   <dd>
-    [function] onChange callback.
+    [function] onPick callback.
 
-    "this" has selectpicker caller, "arguments" have "value" and "label" of changed (selected) item.
+    <dl>
+      <dt>this</dt>
+      <dd>
+        [jQuery object] selectpicker caller
+      </dd>
+      <dt>arguments</dt>
+      <dd>
+        "value" and "label" of changed (selected) item.
+      </dd>
+    </dl>
   </dd>
   <dt>onLoad</dt>
   <dd>
     [function] onLoad callback.
 
-    "this" has selectpicker caller, "arguments" have "value" and "label" of changed (selected) item.
+    <dl>
+      <dt>this</dt>
+      <dd>
+        [jQuery object] selectpicker caller
+      </dd>
+      <dt>arguments</dt>
+      <dd>
+        "value" and "label" of changed (selected) item.
+      </dd>
+    </dl>
   </dd>
   <dt>scrollDuration</dt>
   <dd>
@@ -29,7 +47,7 @@ Options
 example:
 
     $(selector_for_select).selectpicker({
-      onChange: function(value, label) {
+      onPick: function(value, label) {
         console.log(this);
         console.log(label + ": " + value);
       }
