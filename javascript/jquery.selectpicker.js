@@ -232,6 +232,18 @@ $.fn.selectpicker = function(_options) {
         )
     },
     find: function(query) {
+      var that = this;
+
+      return $(selectpickerItems.select.searchWords).map(function(idx, val){
+        if (that.matchAll(query, val)) {
+          return {
+            value: selectpickerItems.select.values[idx],
+            label: selectpickerItems.select.labels[idx]
+          };
+        }
+      }).toArray();
+    },
+    matchAll: function(query, sequence) {
       var regexes = [/.*/];
 
       if (query.length > 0) {
@@ -240,23 +252,11 @@ $.fn.selectpicker = function(_options) {
         }).toArray();
       }
 
-      var that = this;
-
-      return $(selectpickerItems.select.searchWords).map(function(idx, val){
-        if (that.matchAny(regexes, val)) {
-          return {
-            value: selectpickerItems.select.values[idx],
-            label: selectpickerItems.select.labels[idx]
-          };
-        }
-      }).toArray();
-    },
-    matchAny: function(regexes, sequence) {
-      var result = false
+      var result = true
 
       $.each(regexes, function(_, regex) {
-        if (regex.test(sequence)) {
-          result = true
+        if (!regex.test(sequence)) {
+          result = false
           return
         }
       })
