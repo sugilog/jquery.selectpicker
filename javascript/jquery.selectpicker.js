@@ -302,7 +302,7 @@ $.fn.selectpicker = function(_options) {
 
     $(_this).selectpickerEnable();
 
-    $(selectpickerWidget.options.inputId).observeField(0.5, function() {
+    $(selectpickerWidget.options.inputId).observeField(0.2, function() {
       var query = $(this).val();
       var results = selectpickerWidget.options.find(query);
       selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\""), value: ""} : results);
