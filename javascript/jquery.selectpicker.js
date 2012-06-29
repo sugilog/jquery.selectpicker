@@ -118,8 +118,8 @@ $.fn.selectpicker = function(_options) {
       $(selectpickerWidget.picker.labelId).text(label);
 
       if (selectpickerWidget.loaded) {
-        if (typeof _options.onChange !== "undefined") {
-          _options.onChange.apply(_this, [value, label]);
+        if (typeof _options.onPick !== "undefined") {
+          _options.onPick.apply(_this, [value, label]);
         }
       }
       else {

@@ -137,8 +137,8 @@
     <script type="text/javascript">
     <!--
     $("#select_prefecture").selectpicker({
-      onChange: function(value, label) {
-        console.log("changed")
+      onPick: function(value, label) {
+        console.log("picked")
         console.log(this);
         console.log(label + ": " + value);
       },
