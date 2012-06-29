@@ -1,5 +1,5 @@
 /*!
- * jquery.selectpicker v0.0.2
+ * jquery.selectpicker v0.0.3
  *
  * Copyright (c) 2012 Takayuki Sugita, http://github.com/sugilog
  * Released under the MIT License
@@ -232,16 +232,36 @@ $.fn.selectpicker = function(_options) {
         )
     },
     find: function(query) {
-      var regex = new RegExp(query, "i");
+      var regexes = [/.*/];
+
+      if (query.length > 0) {
+        regexes = $(query.split(/(?:\s|　)/)).map(function(idx, val){
+          return new RegExp(val, "i")
+        }).toArray();
+      }
+
+      var that = this;
 
       return $(selectpickerItems.select.searchWords).map(function(idx, val){
-        if (regex.test(val)) {
+        if (that.matchAny(regexes, val)) {
           return {
             value: selectpickerItems.select.values[idx],
             label: selectpickerItems.select.labels[idx]
           };
         }
       }).toArray();
+    },
+    matchAny: function(regexes, sequence) {
+      var result = false
+
+      $.each(regexes, function(_, regex) {
+        if (regex.test(sequence)) {
+          result = true
+          return
+        }
+      })
+
+      return result;
     },
     findCurrentPick: function() {
       var currentPick;
