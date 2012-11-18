@@ -162,6 +162,10 @@ $.fn.selectpicker = function(_options) {
         .on("focus.selectpicker", function(){
           selectpickerWidget.options.show();
         })
+
+      setTimeout(function() {
+        $(selectpickerWidget.picker.labelId).off("click.selectpicker");
+      }, 300);
     },
     show: function() {
       $(this.baseId).show();
@@ -177,6 +181,13 @@ $.fn.selectpicker = function(_options) {
       $(selectpickerWidget.picker.labelId)
         .prop({tabIndex: -1})
         .off("focus.selectpicker");
+
+      setTimeout(function() {
+        $(selectpickerWidget.picker.labelId)
+          .on("click.selectpicker", function(){
+            selectpickerWidget.options.hide();
+          });
+      }, 300);
 
       $(selectpickerWidget.options.inputId)
         .prop({tabIndex: selectpickerItems.tabIndex})
