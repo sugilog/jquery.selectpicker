@@ -144,7 +144,9 @@ $.fn.selectpicker = function(_options) {
       selectpickerWidget.options.setCurrentPick();
     },
     hide: function() {
-      console.log("hide");
+      if ($(selectpickerWidget.form.id).is(":disabled")) {
+        return;
+      }
 
       $(selectpickerWidget.picker.frameId).css({zIndex: 100});
       $(this.baseId).hide();
@@ -162,7 +164,6 @@ $.fn.selectpicker = function(_options) {
         })
     },
     show: function() {
-      console.log("show");
       $(this.baseId).show();
       $(selectpickerWidget.picker.frameId).css({zIndex: 999});
       $(this.inputId).focus().select();
@@ -192,20 +193,19 @@ $.fn.selectpicker = function(_options) {
       }
     },
     disable: function() {
-      $(_this).selectpickerOptionsClose();
+      this.hide();
       $(selectpickerWidget.form.id).prop("disabled", true);
-      $(selectpickerWidget.picker.labelId).off("focus.selectpicker");
-
-      $(selectpickerWidget.picker.labelId).css({opacity: 0.5});
+      $(selectpickerWidget.picker.labelId)
+        .prop({tabIndex: -1})
+        .css({opacity: 0.5})
+        .off("focus.selectpicker");
     },
     enable: function() {
       $(selectpickerWidget.form.id).prop("disabled", false);
+      $(selectpickerWidget.picker.labelId).css({opacity: 1});
       $(selectpickerWidget.picker.labelId).on("focus.selectpicker", function() {
-        // FIXME
-        console.log(this);
         selectpickerWidget.options.show();
       });
-      $(selectpickerWidget.picker.labelId).css({opacity: 1});
     },
     baseId:  selectpickerWidget.picker.frameId + "_options",
     childId: selectpickerWidget.picker.frameId + "_options_child",
