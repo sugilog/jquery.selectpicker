@@ -76,7 +76,7 @@ $.fn.selectpicker = function(_options) {
         .hide()
         .after(
           $("<div>")
-            .prop({id: this.baseId.replace("#", ""), tabIndex: selectpickerItems.tabIndex})
+            .prop({id: this.baseId.replace("#", "")})
             .css({position: "static"})
             .addClass(selectpickerItems.cssClass.base)
             .append(
@@ -86,7 +86,7 @@ $.fn.selectpicker = function(_options) {
                 .addClass(selectpickerItems.cssClass.frame)
                 .append(
                   $("<div>")
-                    .prop({id: this.labelId.replace("#", "")})
+                    .prop({id: this.labelId.replace("#", ""), tabIndex: selectpickerItems.tabIndex})
                     .addClass(selectpickerItems.cssClass.label)
                 )
             )
@@ -144,19 +144,44 @@ $.fn.selectpicker = function(_options) {
       selectpickerWidget.options.setCurrentPick();
     },
     hide: function() {
+      console.log("hide");
+
       $(selectpickerWidget.picker.frameId).css({zIndex: 100});
       $(this.baseId).hide();
-      $(selectpickerWidget.picker.labelId).removeClass(selectpickerItems.cssClass.close);
-      $(selectpickerWidget.picker.labelId).addClass(selectpickerItems.cssClass.open);
+      $(selectpickerWidget.picker.labelId)
+        .removeClass(selectpickerItems.cssClass.close)
+        .addClass(selectpickerItems.cssClass.open);
+
+      // FOCUS
+      $(selectpickerWidget.options.inputId).prop({tabIndex: 0});
+      $(selectpickerWidget.picker.labelId)
+        .prop({tabIndex: selectpickerItems.tabIndex})
+        .off("focus.selectpicker")
+        .on("focus.selectpicker", function(){
+          selectpickerWidget.options.show();
+        })
     },
     show: function() {
+      console.log("show");
       $(this.baseId).show();
       $(selectpickerWidget.picker.frameId).css({zIndex: 999});
       $(this.inputId).focus().select();
-      $(selectpickerWidget.picker.labelId).removeClass(selectpickerItems.cssClass.open);
-      $(selectpickerWidget.picker.labelId).addClass(selectpickerItems.cssClass.close);
+      $(selectpickerWidget.picker.labelId)
+        .removeClass(selectpickerItems.cssClass.open)
+        .addClass(selectpickerItems.cssClass.close);
 
       selectpickerWidget.options.setCurrentPick();
+
+      // FOCUS
+      $(selectpickerWidget.picker.labelId)
+        .prop({tabIndex: -1})
+        .off("focus.selectpicker");
+
+      $(selectpickerWidget.options.inputId)
+        .prop({tabIndex: selectpickerItems.tabIndex})
+        .one("blur.selectpicker", function() {
+          selectpickerWidget.options.hide();
+        });
     },
     toggle: function() {
       if ($(selectpickerWidget.picker.labelId).hasClass(selectpickerItems.cssClass.open)) {
@@ -169,13 +194,16 @@ $.fn.selectpicker = function(_options) {
     disable: function() {
       $(_this).selectpickerOptionsClose();
       $(selectpickerWidget.form.id).prop("disabled", true);
-      $(selectpickerWidget.picker.labelId).off("click.selectpicker");
+      $(selectpickerWidget.picker.labelId).off("focus.selectpicker");
+
       $(selectpickerWidget.picker.labelId).css({opacity: 0.5});
     },
     enable: function() {
       $(selectpickerWidget.form.id).prop("disabled", false);
-      $(selectpickerWidget.picker.labelId).on("click.selectpicker", function() {
-        selectpickerWidget.options.toggle();
+      $(selectpickerWidget.picker.labelId).on("focus.selectpicker", function() {
+        // FIXME
+        console.log(this);
+        selectpickerWidget.options.show();
       });
       $(selectpickerWidget.picker.labelId).css({opacity: 1});
     },
@@ -199,6 +227,14 @@ $.fn.selectpicker = function(_options) {
             $("<ul>")
               .prop({id: this.childId.replace("#", "")})
               .addClass(selectpickerItems.cssClass.list)
+              .on("mouseover.selectpicker", function() {
+                $(selectpickerWidget.options.inputId).off("blur.selectpicker")
+              })
+              .on("mouseout.selectpicker", function() {
+                $(selectpickerWidget.options.inputId).on("blur.selectpicker", function() {
+                  selectpickerWidget.options.hide();
+                })
+              })
           );
       }
       else {
@@ -334,29 +370,6 @@ $.fn.selectpicker = function(_options) {
       $(this).each(function(){
         $(this).prev().selectpickerOptionsClose();
       });
-    });
-
-    var selectpickerOnFucusFunction = function(){
-      $("." + selectpickerItems.cssClass.base).each(function(){
-        //$(this).prev().selectpickerOptionsClose();
-      });
-      $(_this).selectpickerOptionsOpen();
-      $(this).off("focus.selectpicker").prop({tabIndex: -1});
-      $(selectpickerWidget.options.inputId).prop({tabIndex: selectpickerItems.tabIndex});
-    };
-
-    $(selectpickerWidget.picker.baseId).on("focus.selectpicker", function(){
-      selectpickerOnFucusFunction.apply(this);
-    });
-
-    $(selectpickerWidget.options.inputId).on("blur.selectpicker", function(){
-      $(_this).selectpickerOptionsClose();
-      $(selectpickerWidget.picker.baseId).prop({tabIndex: selectpickerItems.tabIndex});
-      $(selectpickerWidget.options.inputId).prop({tabIndex: 0});
-
-      $(selectpickerWidget.picker.baseId).on("focus.selectpicker", function(){
-        selectpickerOnFucusFunction.apply(this);
-      })
     });
   }
 }
