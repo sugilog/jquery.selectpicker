@@ -46,7 +46,8 @@ $.fn.selectpicker = function(_options) {
       close:   "selectpicker_label_close",
       current: "selectpicker_current_pick"
     },
-    scrollDuration: (_options.scrollDuration || 10)
+    scrollDuration: (_options.scrollDuration || 10),
+    tabIndex: (_options.tabIndex || $(this).prop("tabIndex") || 0)
   };
 
   $(this).find("option").each(function(idx, val) {
@@ -75,7 +76,7 @@ $.fn.selectpicker = function(_options) {
         .hide()
         .after(
           $("<div>")
-            .prop({id: this.baseId.replace("#", "")})
+            .prop({id: this.baseId.replace("#", ""), tabIndex: selectpickerItems.tabIndex})
             .css({position: "static"})
             .addClass(selectpickerItems.cssClass.base)
             .append(
@@ -223,7 +224,7 @@ $.fn.selectpicker = function(_options) {
         .addClass(selectpickerItems.cssClass.item)
         .append(
           $("<a>")
-            .prop({href: "javascript:void(0)"})
+            .prop({href: "javascript:void(0)", tabIndex: -1})
             .text(label)
             .on("click.selectpicker", function(){
               selectpickerWidget.form.set($(this).closest("li").data(selectpickerItems.dataKey));
@@ -333,6 +334,29 @@ $.fn.selectpicker = function(_options) {
       $(this).each(function(){
         $(this).prev().selectpickerOptionsClose();
       });
+    });
+
+    var selectpickerOnFucusFunction = function(){
+      $("." + selectpickerItems.cssClass.base).each(function(){
+        //$(this).prev().selectpickerOptionsClose();
+      });
+      $(_this).selectpickerOptionsOpen();
+      $(this).off("focus.selectpicker").prop({tabIndex: -1});
+      $(selectpickerWidget.options.inputId).prop({tabIndex: selectpickerItems.tabIndex});
+    };
+
+    $(selectpickerWidget.picker.baseId).on("focus.selectpicker", function(){
+      selectpickerOnFucusFunction.apply(this);
+    });
+
+    $(selectpickerWidget.options.inputId).on("blur.selectpicker", function(){
+      $(_this).selectpickerOptionsClose();
+      $(selectpickerWidget.picker.baseId).prop({tabIndex: selectpickerItems.tabIndex});
+      $(selectpickerWidget.options.inputId).prop({tabIndex: 0});
+
+      $(selectpickerWidget.picker.baseId).on("focus.selectpicker", function(){
+        selectpickerOnFucusFunction.apply(this);
+      })
     });
   }
 }

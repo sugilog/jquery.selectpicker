@@ -137,6 +137,7 @@
     <script type="text/javascript">
     <!--
     $("#select_prefecture").selectpicker({
+      tabIndex: 1,
       onPick: function(value, label) {
         console.log("picked")
         console.log(this);
@@ -153,7 +154,9 @@
       scrollDuration: 10
     });
 
-    $("#toggle_select").selectpicker();
+    $("#toggle_select").selectpicker({
+      tabIndex: 2
+    });
 
     $("#toggle_selectpicker").on("click", function(){
       $("#toggle_select")["selectpicker" + ($(this).is(":checked") ? "Enable" : "Disable")]();
