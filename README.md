@@ -41,6 +41,10 @@ Options
   <dd>
     [Number or String] duration; like 10, 100 or "fast", .. (default: 10)
   </dd>
+  <dt>tabIndex</dt>
+  <dd>
+    [Number] overwrite tabIndex, .. (default: $(this).prop("tabIndex") or 0)
+  </dd>
 </dl>
 
 
