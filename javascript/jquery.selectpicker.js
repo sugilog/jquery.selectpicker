@@ -21,6 +21,9 @@ $.fn.selectpickerEnable = function() {
 $.fn.selectpickerDisable = function() {
   this.selectpicker({ callWidget: "disable" });
 };
+$.fn.selectpickerIsDisabled = function() {
+  return this.selectpicker({ callWidget: "isDisabled" });
+};
 $.fn.selectpicker = function(_options) {
   // prepare
   var _this = this;
@@ -218,6 +221,9 @@ $.fn.selectpicker = function(_options) {
         selectpickerWidget.options.show();
       });
     },
+    isDisabled: function() {
+      return $(selectpickerWidget.form.id).prop("disabled");
+    },
     baseId:  selectpickerWidget.picker.frameId + "_options",
     childId: selectpickerWidget.picker.frameId + "_options_child",
     inputId: selectpickerWidget.picker.frameId + "_options_search",
@@ -340,7 +346,7 @@ $.fn.selectpicker = function(_options) {
   };
 
   if (typeof _options.callWidget !== "undefined") {
-    selectpickerWidget.options[_options.callWidget]();
+    return selectpickerWidget.options[_options.callWidget]();
   }
   else {
     selectpickerWidget.picker.append();
