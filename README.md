@@ -73,6 +73,9 @@ toggle open and close the options:
 
     $(selector_for_select).selectpickerOptionsToggle();
 
+check selectpicker disable or not:
+
+    $(selector_for_select).selectpickerIsDisabled();
 
 Licence
 ------------------------------------------------------------
