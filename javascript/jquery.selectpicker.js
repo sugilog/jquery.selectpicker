@@ -77,7 +77,7 @@ $.fn.selectpicker = function(_options) {
         .after(
           $("<div>")
             .prop({id: this.baseId.replace("#", "")})
-            .css({position: "static"})
+            .css({position: "relative"})
             .addClass(selectpickerItems.cssClass.base)
             .append(
               $("<div>")
