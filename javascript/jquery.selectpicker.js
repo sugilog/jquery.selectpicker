@@ -1,5 +1,5 @@
 /*!
- * jquery.selectpicker v0.1.1
+ * jquery.selectpicker v0.1.2
  *
  * Copyright (c) 2012 Takayuki Sugita, http://github.com/sugilog
  * Released under the MIT License
@@ -93,6 +93,12 @@ $.fn.selectpicker = function(_options) {
                     .addClass(selectpickerItems.cssClass.label)
                 )
             )
+            .append(
+              $("<input>")
+                .addClass("fakeInput")
+                .prop({type: "text", tabIndex: -1})
+                .css({width: 0, height: 0, border: 0, outline: 0})
+            )
         );
     }
   };
@@ -122,6 +128,9 @@ $.fn.selectpicker = function(_options) {
       $(selectpickerWidget.picker.labelId).text(label);
 
       if (selectpickerWidget.loaded) {
+        // XXX: fake input to make enter-key-form-submitable
+        $(selectpickerWidget.picker.baseId).find(".fakeInput").focus().select()
+
         if (typeof _options.onPick !== "undefined") {
           _options.onPick.apply(_this, [value, label]);
         }
@@ -369,6 +378,7 @@ $.fn.selectpicker = function(_options) {
         if (e.keyCode == "13") {
           selectpickerWidget.form.set(currentPick.data(selectpickerItems.dataKey));
           selectpickerWidget.options.hide();
+
           return false;
         }
         else {
