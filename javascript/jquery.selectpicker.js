@@ -97,7 +97,7 @@ $.fn.selectpicker = function(_options) {
               $("<input>")
                 .addClass("fakeInput")
                 .prop({type: "text", tabIndex: -1})
-                .css({width: 0, height: 0, border: 0, outline: 0})
+                .css({width: 1, height: 1, border: 0, outline: 0, position: "absolute", top: -9999, left: -9999})
             )
         );
     }
