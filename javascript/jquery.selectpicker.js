@@ -58,7 +58,7 @@ $.fn.selectpicker = function(_options) {
     var searchWord = label;
     var kana = $(val).data("kana");
 
-    if (typeof kana !== "undefined" && kana.length > 0) {
+    if (typeof kana !== "undefined" && kana.toString().length > 0) {
       searchWord = label + "," + kana;
     }
 
