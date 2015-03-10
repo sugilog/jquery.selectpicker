@@ -41,16 +41,17 @@ Options
   <dd>
     [Number or String] duration; like 10, 100 or "fast", .. (default: 10)
   </dd>
-  <dt>tabIndex</dt>
+  <dt>tabindex</dt>
   <dd>
-    [Number] overwrite tabIndex, .. (default: $(this).prop("tabIndex") or 0)
+    [Number] overwrite tabindex, .. (default: jQuery(this).prop("tabindex") or 0)
+    ( allow tabIndex )
   </dd>
 </dl>
 
 
 example:
 
-    $(selector_for_select).selectpicker({
+    jQuery(selector_for_select).selectpicker({
       onPick: function(value, label) {
         console.log(this);
         console.log(label + ": " + value);
@@ -61,21 +62,44 @@ example:
 Utility Methods
 ------------------------------------------------------------
 
+change picked item:
+
+    jQuery.selectpicker.util.change( jQuery( selector_for_select ), value );  
+
 make enable selectpicker widget:
 
-    $(selector_for_select).selectpickerEnable();
+    jQuery.selectpicker.util.enable( jQuery( selector_for_select ) );  
 
 make disable selectpicker widget:
 
-    $(selector_for_select).selectpickerDisable();
+    jQuery.selectpicker.util.disable( jQuery( selector_for_select ) );  
 
 toggle open and close the options:
 
-    $(selector_for_select).selectpickerOptionsToggle();
+    jQuery.selectpicker.util.optionsToggle( jQuery( selector_for_select ) );  
 
 check selectpicker disable or not:
 
-    $(selector_for_select).selectpickerIsDisabled();
+    jQuery.selectpicker.util.isDisabled( jQuery( selector_for_select ) );  
+
+
+### Deprecated Methods
+
+make enable selectpicker widget:
+
+    jQuery(selector_for_select).selectpickerEnable();
+
+make disable selectpicker widget:
+
+    jQuery(selector_for_select).selectpickerDisable();
+
+toggle open and close the options:
+
+    jQuery(selector_for_select).selectpickerOptionsToggle();
+
+check selectpicker disable or not:
+
+    jQuery(selector_for_select).selectpickerIsDisabled();
 
 Licence
 ------------------------------------------------------------
