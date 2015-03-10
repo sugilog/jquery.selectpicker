@@ -1,30 +1,12 @@
-$.fn.selectpickerOptionsClose = function() {
-  this.selectpicker({ callWidget: "hide" });
-};
-$.fn.selectpickerOptionsOpen = function() {
-  this.selectpicker({ callWidget: "show" });
-};
-$.fn.selectpickerOptionsToggle = function() {
-  this.selectpicker({ callWidget: "toggle" });
-};
-$.fn.selectpickerEnable = function() {
-  this.selectpicker({ callWidget: "enable" });
-};
-$.fn.selectpickerDisable = function() {
-  this.selectpicker({ callWidget: "disable" });
-};
-$.fn.selectpickerIsDisabled = function() {
-  return this.selectpicker({ callWidget: "isDisabled" });
-};
-$.fn.selectpicker = function(_options) {
+jQuery.fn.selectpicker = function(_options) {
   // prepare
   var _this = this;
   _options = _options ? _options : {};
 
   var selectpickerItems = {
     select: {
-      id:   "#" + $(this).eq(0).prop("id"),
-      name: $(this).eq(0).prop("name"),
+      id:   "#" + jQuery(this).eq(0).prop("id"),
+      name: jQuery(this).eq(0).prop("name"),
       labels: [],
       values: [],
       searchWords: []
@@ -42,20 +24,20 @@ $.fn.selectpicker = function(_options) {
       current: "selectpicker_current_pick"
     },
     scrollDuration: (_options.scrollDuration || 10),
-    tabIndex: (_options.tabIndex || $(this).prop("tabIndex") || 0)
+    tabIndex: (_options.tabIndex || jQuery(this).prop("tabIndex") || 0)
   };
 
-  $(this).find("option").each(function(idx, val) {
+  jQuery(this).find("option").each(function(idx, val) {
     var label = val.text;
     var searchWord = label;
-    var kana = $(val).data("kana");
+    var kana = jQuery(val).data("kana");
 
     if (typeof kana !== "undefined" && kana.toString().length > 0) {
       searchWord = label + "," + kana;
     }
 
     selectpickerItems.select.labels.push(label);
-    selectpickerItems.select.values.push($(val).val());
+    selectpickerItems.select.values.push(jQuery(val).val());
     selectpickerItems.select.searchWords.push(searchWord);
   });
 
@@ -66,27 +48,27 @@ $.fn.selectpicker = function(_options) {
     frameId: "#selectpicker_" + selectpickerItems.select.id.replace("#", "") + "_frame",
     labelId: "#selectpicker_" + selectpickerItems.select.id.replace("#", "") + "_label",
     append: function() {
-      $(_this)
+      jQuery(_this)
         .prop("disabled", true)
         .hide()
         .after(
-          $("<div>")
+          jQuery("<div>")
             .prop({id: this.baseId.replace("#", "")})
             .css({position: "relative"})
             .addClass(selectpickerItems.cssClass.base)
             .append(
-              $("<div>")
+              jQuery("<div>")
                 .prop({id: this.frameId.replace("#", "")})
                 .css({position: "absolute", zIndex: 100})
                 .addClass(selectpickerItems.cssClass.frame)
                 .append(
-                  $("<div>")
+                  jQuery("<div>")
                     .prop({id: this.labelId.replace("#", ""), tabIndex: selectpickerItems.tabIndex})
                     .addClass(selectpickerItems.cssClass.label)
                 )
             )
             .append(
-              $("<input>")
+              jQuery("<input>")
                 .addClass("fakeInput")
                 .prop({type: "text", tabIndex: -1})
                 .css({width: 1, height: 1, border: 0, outline: 0})
@@ -97,31 +79,31 @@ $.fn.selectpicker = function(_options) {
   selectpickerWidget.form = {
     id: selectpickerWidget.picker.frameId + "_hidden",
     append: function() {
-      $(selectpickerWidget.picker.frameId)
+      jQuery(selectpickerWidget.picker.frameId)
         .append(
-          $("<input>")
+          jQuery("<input>")
             .prop({
               type: "hidden",
               name: selectpickerItems.select.name,
               id:   this.id.replace("#", "")
             })
         );
-      this.set($(selectpickerItems.select.id).val());
+      this.set(jQuery(selectpickerItems.select.id).val());
     },
     set: function(value) {
       if (typeof value === "undefined") {
-        value = $(selectpickerItems.select.id).children(":first").val();
+        value = jQuery(selectpickerItems.select.id).children(":first").val();
       }
-      $(selectpickerItems.select.id).val(value);
+      jQuery(selectpickerItems.select.id).val(value);
 
-      var label = $(selectpickerItems.select.id).find(":selected").text()
+      var label = jQuery(selectpickerItems.select.id).find(":selected").text()
 
-      $(this.id).val(value);
-      $(selectpickerWidget.picker.labelId).text(label);
+      jQuery(this.id).val(value);
+      jQuery(selectpickerWidget.picker.labelId).text(label);
 
       if (selectpickerWidget.loaded) {
         // XXX: fake input to make enter-key-form-submitable
-        $(selectpickerWidget.picker.baseId).find(".fakeInput").focus().select()
+        jQuery(selectpickerWidget.picker.baseId).find(".fakeInput").focus().select()
 
         if (typeof _options.onPick !== "undefined") {
           _options.onPick.apply(_this, [value, label]);
@@ -141,26 +123,26 @@ $.fn.selectpicker = function(_options) {
       var that = this;
       var base = that.base();
 
-      $(options).each(function(_, val) {
+      jQuery(options).each(function(_, val) {
         base.find(that.childId).append(that.child(val.label, val.value))
       });
 
       selectpickerWidget.options.setCurrentPick();
     },
     hide: function() {
-      if ($(selectpickerWidget.form.id).is(":disabled")) {
+      if (jQuery(selectpickerWidget.form.id).is(":disabled")) {
         return;
       }
 
-      $(selectpickerWidget.picker.frameId).css({zIndex: 100});
-      $(this.baseId).hide();
-      $(selectpickerWidget.picker.labelId)
+      jQuery(selectpickerWidget.picker.frameId).css({zIndex: 100});
+      jQuery(this.baseId).hide();
+      jQuery(selectpickerWidget.picker.labelId)
         .removeClass(selectpickerItems.cssClass.close)
         .addClass(selectpickerItems.cssClass.open);
 
       // FOCUS
-      $(selectpickerWidget.options.inputId).prop({tabIndex: 0});
-      $(selectpickerWidget.picker.labelId)
+      jQuery(selectpickerWidget.options.inputId).prop({tabIndex: 0});
+      jQuery(selectpickerWidget.picker.labelId)
         .prop({tabIndex: selectpickerItems.tabIndex})
         .off("focus.selectpicker")
         .on("focus.selectpicker", function(){
@@ -168,39 +150,39 @@ $.fn.selectpicker = function(_options) {
         })
 
       setTimeout(function() {
-        $(selectpickerWidget.picker.labelId).off("click.selectpicker");
+        jQuery(selectpickerWidget.picker.labelId).off("click.selectpicker");
       }, 300);
     },
     show: function() {
-      $(this.baseId).show();
-      $(selectpickerWidget.picker.frameId).css({zIndex: 999});
-      $(this.inputId).focus().select();
-      $(selectpickerWidget.picker.labelId)
+      jQuery(this.baseId).show();
+      jQuery(selectpickerWidget.picker.frameId).css({zIndex: 999});
+      jQuery(this.inputId).focus().select();
+      jQuery(selectpickerWidget.picker.labelId)
         .removeClass(selectpickerItems.cssClass.open)
         .addClass(selectpickerItems.cssClass.close);
 
       selectpickerWidget.options.setCurrentPick();
 
       // FOCUS
-      $(selectpickerWidget.picker.labelId)
+      jQuery(selectpickerWidget.picker.labelId)
         .prop({tabIndex: -1})
         .off("focus.selectpicker");
 
       setTimeout(function() {
-        $(selectpickerWidget.picker.labelId)
+        jQuery(selectpickerWidget.picker.labelId)
           .on("click.selectpicker", function(){
             selectpickerWidget.options.hide();
           });
       }, 300);
 
-      $(selectpickerWidget.options.inputId)
+      jQuery(selectpickerWidget.options.inputId)
         .prop({tabIndex: selectpickerItems.tabIndex})
         .one("blur.selectpicker", function() {
           selectpickerWidget.options.hide();
         });
     },
     toggle: function() {
-      if ($(selectpickerWidget.picker.labelId).hasClass(selectpickerItems.cssClass.open)) {
+      if (jQuery(selectpickerWidget.picker.labelId).hasClass(selectpickerItems.cssClass.open)) {
         this.show();
       }
       else {
@@ -209,21 +191,21 @@ $.fn.selectpicker = function(_options) {
     },
     disable: function() {
       this.hide();
-      $(selectpickerWidget.form.id).prop("disabled", true);
-      $(selectpickerWidget.picker.labelId)
+      jQuery(selectpickerWidget.form.id).prop("disabled", true);
+      jQuery(selectpickerWidget.picker.labelId)
         .prop({tabIndex: -1})
         .css({opacity: 0.5})
         .off("focus.selectpicker");
     },
     enable: function() {
-      $(selectpickerWidget.form.id).prop("disabled", false);
-      $(selectpickerWidget.picker.labelId).css({opacity: 1});
-      $(selectpickerWidget.picker.labelId).on("focus.selectpicker", function() {
+      jQuery(selectpickerWidget.form.id).prop("disabled", false);
+      jQuery(selectpickerWidget.picker.labelId).css({opacity: 1});
+      jQuery(selectpickerWidget.picker.labelId).on("focus.selectpicker", function() {
         selectpickerWidget.options.show();
       });
     },
     isDisabled: function() {
-      return $(selectpickerWidget.form.id).prop("disabled");
+      return jQuery(selectpickerWidget.form.id).prop("disabled");
     },
     baseId:  selectpickerWidget.picker.frameId + "_options",
     childId: selectpickerWidget.picker.frameId + "_options_child",
@@ -231,25 +213,25 @@ $.fn.selectpicker = function(_options) {
     base: function() {
       var optionsBase;
 
-      if ($(this.baseId).length <= 0) {
-        optionsBase = $("<div>").prop({id: this.baseId.replace("#", "")}).append(this.search());
-        $(selectpickerWidget.picker.frameId).append(optionsBase);
+      if (jQuery(this.baseId).length <= 0) {
+        optionsBase = jQuery("<div>").prop({id: this.baseId.replace("#", "")}).append(this.search());
+        jQuery(selectpickerWidget.picker.frameId).append(optionsBase);
       }
       else {
-        optionsBase = $(this.baseId);
+        optionsBase = jQuery(this.baseId);
       }
 
       if (optionsBase.find(this.childId).length <= 0) {
         optionsBase
           .append(
-            $("<ul>")
+            jQuery("<ul>")
               .prop({id: this.childId.replace("#", "")})
               .addClass(selectpickerItems.cssClass.list)
               .on("mouseover.selectpicker", function() {
-                $(selectpickerWidget.options.inputId).off("blur.selectpicker")
+                jQuery(selectpickerWidget.options.inputId).off("blur.selectpicker")
               })
               .on("mouseout.selectpicker", function() {
-                $(selectpickerWidget.options.inputId).on("blur.selectpicker", function() {
+                jQuery(selectpickerWidget.options.inputId).on("blur.selectpicker", function() {
                   selectpickerWidget.options.hide();
                 })
               })
@@ -262,7 +244,7 @@ $.fn.selectpicker = function(_options) {
       return optionsBase;
     },
     search: function() {
-      return $("<input>")
+      return jQuery("<input>")
         .addClass(selectpickerItems.cssClass.search)
         .prop({
           type: "text",
@@ -273,15 +255,15 @@ $.fn.selectpicker = function(_options) {
         // for IE bug; attr autocomplete is not work for html attributes; only autocomplete??
     },
     child: function(label, value) {
-      return $("<li>")
+      return jQuery("<li>")
         .data(selectpickerItems.dataKey, value)
         .addClass(selectpickerItems.cssClass.item)
         .append(
-          $("<a>")
+          jQuery("<a>")
             .prop({href: "javascript:void(0)", tabIndex: -1})
             .text(label)
             .on("click.selectpicker", function(){
-              selectpickerWidget.form.set($(this).closest("li").data(selectpickerItems.dataKey));
+              selectpickerWidget.form.set(jQuery(this).closest("li").data(selectpickerItems.dataKey));
               selectpickerWidget.options.hide();
             })
         )
@@ -289,7 +271,7 @@ $.fn.selectpicker = function(_options) {
     find: function(query) {
       var that = this;
 
-      return $(selectpickerItems.select.searchWords).map(function(idx, val){
+      return jQuery(selectpickerItems.select.searchWords).map(function(idx, val){
         if (that.matchAll(query, val)) {
           return {
             value: selectpickerItems.select.values[idx],
@@ -302,14 +284,14 @@ $.fn.selectpicker = function(_options) {
       var regexes = [/.*/];
 
       if (query.length > 0) {
-        regexes = $(query.split(/(?:\s|　)/)).map(function(idx, val){
+        regexes = jQuery(query.split(/(?:\s|　)/)).map(function(idx, val){
           return new RegExp(val, "i")
         }).toArray();
       }
 
       var result = true
 
-      $.each(regexes, function(_, regex) {
+      jQuery.each(regexes, function(_, regex) {
         if (!regex.test(sequence)) {
           result = false
           return
@@ -321,9 +303,9 @@ $.fn.selectpicker = function(_options) {
     findCurrentPick: function() {
       var currentPick;
 
-      $(selectpickerWidget.options.childId).find("li").each(function() {
-        if ($(this).hasClass(selectpickerItems.cssClass.current)) {
-          currentPick = $(this);
+      jQuery(selectpickerWidget.options.childId).find("li").each(function() {
+        if (jQuery(this).hasClass(selectpickerItems.cssClass.current)) {
+          currentPick = jQuery(this);
           return;
         }
       });
@@ -332,7 +314,7 @@ $.fn.selectpicker = function(_options) {
     },
     setCurrentPick: function(currentPick) {
       if (typeof currentPick === "undefined") {
-        currentPick = selectpickerWidget.options.findCurrentPick() || $(selectpickerWidget.options.childId).children(":first");
+        currentPick = selectpickerWidget.options.findCurrentPick() || jQuery(selectpickerWidget.options.childId).children(":first");
       }
 
       if (currentPick.length != 0) {
@@ -355,15 +337,15 @@ $.fn.selectpicker = function(_options) {
     selectpickerWidget.form.append();
     selectpickerWidget.options.hide();
 
-    $(_this).selectpickerEnable();
+    jQuery(_this).selectpickerEnable();
 
-    $(selectpickerWidget.options.inputId).observeField(0.2, function() {
-      var query = $(this).val();
+    jQuery(selectpickerWidget.options.inputId).observeField(0.2, function() {
+      var query = jQuery(this).val();
       var results = selectpickerWidget.options.find(query);
       selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\""), value: ""} : results);
     });
 
-    $(selectpickerWidget.options.inputId).keydown(function(e) {
+    jQuery(selectpickerWidget.options.inputId).keydown(function(e) {
       if (e.keyCode == "13" || e.keyCode == "38" || e.keyCode == "40") {
         var currentPick = selectpickerWidget.options.setCurrentPick(selectpickerWidget.options.findCurrentPick());
 
@@ -384,10 +366,10 @@ $.fn.selectpicker = function(_options) {
       }
     });
 
-    $("." + selectpickerItems.cssClass.base).outerOff("click.selectpicker");
-    $("." + selectpickerItems.cssClass.base).outerOn("click.selectpicker", function(e){
-      $(this).each(function(){
-        $(this).prev().selectpickerOptionsClose();
+    jQuery("." + selectpickerItems.cssClass.base).outerOff("click.selectpicker");
+    jQuery("." + selectpickerItems.cssClass.base).outerOn("click.selectpicker", function(e){
+      jQuery(this).each(function(){
+        jQuery(this).prev().selectpickerOptionsClose();
       });
     });
   }
