@@ -21,3 +21,10 @@ jQuery.fn.selectpickerDisable = function() {
 jQuery.fn.selectpickerIsDisabled = function() {
   return jQuery.selectpicker.widget.options.isDisabled( this );
 };
+
+jQuery.selectpicker.util = {
+  change: function( context, pickItem ) {
+    var config = jQuery.selectpicker.config( context );
+    config.events.onSetValue( context, pickItem );
+  }
+}

@@ -57,8 +57,7 @@ jQuery.fn.selectpicker = function( options ) {
       jQuery( config.items.selector.options.inputId ).on( "blur.selectpicker", config.events.onBlurPicker );
     },
     onClickOptions: function() {
-      jQuery.selectpicker.widget.form.set( context, jQuery( this ).closest( "li" ).data( config.items.dataKey ) );
-      jQuery.selectpicker.widget.options.hide( context );
+      config.events.onSetValue( context, jQuery( this ).closest( "li" ).data( config.items.dataKey ) );
     },
     onKeydownOptions: function( event ) {
       var currentPick;
@@ -70,9 +69,7 @@ jQuery.fn.selectpicker = function( options ) {
 
       switch( event.keyCode ) {
       case "13":
-        jQuery.selectpicker.widget.form.set( context, currentPick.data( config.items.dataKey ) );
-        jQuery.selectpicker.widget.options.hide( context );
-
+        config.events.onSetValue( context, currentPick.data( config.items.dataKey ) );
         return false;
       case "38":
       case "40":
@@ -88,6 +85,12 @@ jQuery.fn.selectpicker = function( options ) {
       jQuery( this ).each( function() {
         jQuery( this ).prev().selectpickerOptionsClose();
       });
+    },
+    onSetValue: function( context, pickItem ) {
+      if ( jQuery.inArray( pickItem, config.items.select.values ) ) {
+        jQuery.selectpicker.widget.form.set( context, pickItem );
+        jQuery.selectpicker.widget.options.hide( context );
+      }
     }
   };
 
@@ -362,7 +365,6 @@ jQuery.selectpicker.widget.options = {
         .prop( { tabindex: -1 } )
         .off( "focus.selectpicker" );
     }, 0 );
-
   },
   enable: function( context ) {
     var config = jQuery.selectpicker.config( context );
@@ -524,6 +526,13 @@ jQuery.fn.selectpickerDisable = function() {
 jQuery.fn.selectpickerIsDisabled = function() {
   return jQuery.selectpicker.widget.options.isDisabled( this );
 };
+
+jQuery.selectpicker.util = {
+  change: function( context, pickItem ) {
+    var config = jQuery.selectpicker.config( context );
+    config.events.onSetValue( context, pickItem );
+  }
+}
 
 if ( typeof jQuery.fn.observeField === "undefined" ) {
   // jquery.observe_field
