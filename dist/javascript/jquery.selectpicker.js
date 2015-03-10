@@ -1,6 +1,15 @@
 /*!
  * jquery.selectpicker v0.1.2
  *
+ * Copyright (c) Takayuki Sugita, https://github.com/sugilog/jquery.selectpicker
+ * Released under the MIT License
+*/
+
+( function() {
+"use strict";
+/*!
+ * jquery.selectpicker v0.1.2
+ *
  * Copyright (c) 2012 Takayuki Sugita, http://github.com/sugilog
  * Released under the MIT License
 */
@@ -465,3 +474,4 @@ if (typeof $.fn.observeField === "undefined") {
 }
 
 })(jQuery);
+})();
