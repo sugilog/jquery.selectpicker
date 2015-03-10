@@ -3,6 +3,22 @@ jQuery.selectpicker.util = {
     var config = jQuery.selectpicker.config( context );
     config.events.onSetValue( context, pickItem );
   },
+  deselect: function( context, deselectItem ) {
+    var current,
+        config = jQuery.selectpicker.config( context );
+
+    current = jQuery.selectpicker.widget.options.findCurrentPick( context );
+
+    if ( current.length === 0 ) {
+      return
+    }
+
+    current = current.data( config.items.dataKey );
+
+    if ( current === deselectItem ) {
+      config.events.onSetValue( context, "" );
+    };
+  },
   optionsClose: function( context ) {
     jQuery.selectpicker.widget.options.hide( context );
   },
