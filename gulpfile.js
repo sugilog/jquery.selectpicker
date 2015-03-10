@@ -20,6 +20,8 @@ gulp.task( "js", function() {
   return gulp
     .src( [
       "./src/javascript/core.js",
+      "./src/javascript/config.js",
+      "./src/javascript/widget.js",
       "./src/javascript/util.js",
       "./src/javascript/observe_field.js",
       "./src/javascript/outer.js"

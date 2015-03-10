@@ -7,400 +7,512 @@
 
 ( function() {
 "use strict";
-$.fn.selectpickerOptionsClose = function() {
-  this.selectpicker({ callWidget: "hide" });
-};
-$.fn.selectpickerOptionsOpen = function() {
-  this.selectpicker({ callWidget: "show" });
-};
-$.fn.selectpickerOptionsToggle = function() {
-  this.selectpicker({ callWidget: "toggle" });
-};
-$.fn.selectpickerEnable = function() {
-  this.selectpicker({ callWidget: "enable" });
-};
-$.fn.selectpickerDisable = function() {
-  this.selectpicker({ callWidget: "disable" });
-};
-$.fn.selectpickerIsDisabled = function() {
-  return this.selectpicker({ callWidget: "isDisabled" });
-};
-$.fn.selectpicker = function(_options) {
-  // prepare
-  var _this = this;
-  _options = _options ? _options : {};
+jQuery.selectpicker = {};
+jQuery.fn.selectpicker = function( options ) {
+  var events, config,
+      context = jQuery( this );
 
-  var selectpickerItems = {
-    select: {
-      id:   "#" + $(this).eq(0).prop("id"),
-      name: $(this).eq(0).prop("name"),
-      labels: [],
-      values: [],
-      searchWords: []
+  jQuery.selectpicker.configure( context, options );
+  config = jQuery.selectpicker.config( context );
+
+  function run() {
+    jQuery.selectpicker.widget.picker.append( context );
+    jQuery.selectpicker.widget.options.append( context, jQuery.selectpicker.widget.options.find( "" ) );
+    jQuery.selectpicker.widget.form.append( context );
+    jQuery.selectpicker.widget.options.hide( context );
+
+    context.selectpickerEnable();
+
+    jQuery( config.items.selector.options.inputId ).observeField( 0.2, function() {
+      var query = jQuery( this ).val();
+      var results = jQuery.selectpicker.widget.options.find( context, query );
+      jQuery.selectpicker.widget.options.append( context, ( results.length == 0 ) ? { label: ( "not found for \"" + query + "\"" ), value: "" } : results );
+    });
+
+    jQuery( config.items.selector.options.inputId ).on( "keydown", onKeydownOptions );
+
+    jQuery( "." + config.items.cssClass.base ).outerOff( "click.selectpicker" );
+    jQuery( "." + config.items.cssClass.base ).outerOn(  "click.selectpicker", config.events.onOuterClick );
+  }
+
+  events = {
+    onFocusPicker: function() {
+      jQuery.selectpicker.widget.options.show( context );
     },
-    dataKey: "selectpicker_option_value",
-    cssClass: {
-      base:    "selectpicker_base",
-      frame:   "selectpicker_frame",
-      label:   "selectpicker_label",
-      search:  "selectpicker_search",
-      list:    "selectpicker_list",
-      item:    "selectpicker_item",
-      open:    "selectpicker_label_open",
-      close:   "selectpicker_label_close",
-      current: "selectpicker_current_pick"
+    onClickPicker: function() {
+      jQuery.selectpicker.widget.options.hide( context );
     },
-    scrollDuration: (_options.scrollDuration || 10),
-    tabIndex: (_options.tabIndex || $(this).prop("tabIndex") || 0)
-  };
-
-  $(this).find("option").each(function(idx, val) {
-    var label = val.text;
-    var searchWord = label;
-    var kana = $(val).data("kana");
-
-    if (typeof kana !== "undefined" && kana.toString().length > 0) {
-      searchWord = label + "," + kana;
-    }
-
-    selectpickerItems.select.labels.push(label);
-    selectpickerItems.select.values.push($(val).val());
-    selectpickerItems.select.searchWords.push(searchWord);
-  });
-
-  var selectpickerWidget = {};
-  selectpickerWidget.loaded = false;
-  selectpickerWidget.picker = {
-    baseId:  "#selectpicker_" + selectpickerItems.select.id.replace("#", ""),
-    frameId: "#selectpicker_" + selectpickerItems.select.id.replace("#", "") + "_frame",
-    labelId: "#selectpicker_" + selectpickerItems.select.id.replace("#", "") + "_label",
-    append: function() {
-      $(_this)
-        .prop("disabled", true)
-        .hide()
-        .after(
-          $("<div>")
-            .prop({id: this.baseId.replace("#", "")})
-            .css({position: "relative"})
-            .addClass(selectpickerItems.cssClass.base)
-            .append(
-              $("<div>")
-                .prop({id: this.frameId.replace("#", "")})
-                .css({position: "absolute", zIndex: 100})
-                .addClass(selectpickerItems.cssClass.frame)
-                .append(
-                  $("<div>")
-                    .prop({id: this.labelId.replace("#", ""), tabIndex: selectpickerItems.tabIndex})
-                    .addClass(selectpickerItems.cssClass.label)
-                )
-            )
-            .append(
-              $("<input>")
-                .addClass("fakeInput")
-                .prop({type: "text", tabIndex: -1})
-                .css({width: 1, height: 1, border: 0, outline: 0})
-            )
-        );
-    }
-  };
-  selectpickerWidget.form = {
-    id: selectpickerWidget.picker.frameId + "_hidden",
-    append: function() {
-      $(selectpickerWidget.picker.frameId)
-        .append(
-          $("<input>")
-            .prop({
-              type: "hidden",
-              name: selectpickerItems.select.name,
-              id:   this.id.replace("#", "")
-            })
-        );
-      this.set($(selectpickerItems.select.id).val());
+    onBlurPicker: function() {
+      jQuery.selectpicker.widget.options.hide( context );
     },
-    set: function(value) {
-      if (typeof value === "undefined") {
-        value = $(selectpickerItems.select.id).children(":first").val();
-      }
-      $(selectpickerItems.select.id).val(value);
-
-      var label = $(selectpickerItems.select.id).find(":selected").text()
-
-      $(this.id).val(value);
-      $(selectpickerWidget.picker.labelId).text(label);
-
-      if (selectpickerWidget.loaded) {
-        // XXX: fake input to make enter-key-form-submitable
-        $(selectpickerWidget.picker.baseId).find(".fakeInput").focus().select()
-
-        if (typeof _options.onPick !== "undefined") {
-          _options.onPick.apply(_this, [value, label]);
-        }
-      }
-      else {
-        if (typeof _options.onLoad !== "undefined") {
-          _options.onLoad.apply(_this, [value, label]);
-        }
-
-        selectpickerWidget.loaded = true;
-      }
-    }
-  };
-  selectpickerWidget.options = {
-    append: function(options) {
-      var that = this;
-      var base = that.base();
-
-      $(options).each(function(_, val) {
-        base.find(that.childId).append(that.child(val.label, val.value))
-      });
-
-      selectpickerWidget.options.setCurrentPick();
+    onMouseoverOptions: function() {
+      jQuery( config.items.selector.options.inputId ).off( "blur.selectpicker" );
     },
-    hide: function() {
-      if ($(selectpickerWidget.form.id).is(":disabled")) {
-        return;
-      }
-
-      $(selectpickerWidget.picker.frameId).css({zIndex: 100});
-      $(this.baseId).hide();
-      $(selectpickerWidget.picker.labelId)
-        .removeClass(selectpickerItems.cssClass.close)
-        .addClass(selectpickerItems.cssClass.open);
-
-      // FOCUS
-      $(selectpickerWidget.options.inputId).prop({tabIndex: 0});
-      $(selectpickerWidget.picker.labelId)
-        .prop({tabIndex: selectpickerItems.tabIndex})
-        .off("focus.selectpicker")
-        .on("focus.selectpicker", function(){
-          selectpickerWidget.options.show();
-        })
-
-      setTimeout(function() {
-        $(selectpickerWidget.picker.labelId).off("click.selectpicker");
-      }, 300);
+    onMouseoutOptions: function() {
+      jQuery( config.items.selector.options.inputId ).on( "blur.selectpicker", config.events.onBlurPicker );
     },
-    show: function() {
-      $(this.baseId).show();
-      $(selectpickerWidget.picker.frameId).css({zIndex: 999});
-      $(this.inputId).focus().select();
-      $(selectpickerWidget.picker.labelId)
-        .removeClass(selectpickerItems.cssClass.open)
-        .addClass(selectpickerItems.cssClass.close);
-
-      selectpickerWidget.options.setCurrentPick();
-
-      // FOCUS
-      $(selectpickerWidget.picker.labelId)
-        .prop({tabIndex: -1})
-        .off("focus.selectpicker");
-
-      setTimeout(function() {
-        $(selectpickerWidget.picker.labelId)
-          .on("click.selectpicker", function(){
-            selectpickerWidget.options.hide();
-          });
-      }, 300);
-
-      $(selectpickerWidget.options.inputId)
-        .prop({tabIndex: selectpickerItems.tabIndex})
-        .one("blur.selectpicker", function() {
-          selectpickerWidget.options.hide();
-        });
+    onClickOptions: function() {
+      jQuery.selectpicker.widget.form.set( context, jQuery( this ).closest( "li" ).data( config.items.dataKey ) );
+      jQuery.selectpicker.widget.options.hide( context );
     },
-    toggle: function() {
-      if ($(selectpickerWidget.picker.labelId).hasClass(selectpickerItems.cssClass.open)) {
-        this.show();
-      }
-      else {
-        this.hide();
-      }
-    },
-    disable: function() {
-      this.hide();
-      $(selectpickerWidget.form.id).prop("disabled", true);
-      $(selectpickerWidget.picker.labelId)
-        .prop({tabIndex: -1})
-        .css({opacity: 0.5})
-        .off("focus.selectpicker");
-    },
-    enable: function() {
-      $(selectpickerWidget.form.id).prop("disabled", false);
-      $(selectpickerWidget.picker.labelId).css({opacity: 1});
-      $(selectpickerWidget.picker.labelId).on("focus.selectpicker", function() {
-        selectpickerWidget.options.show();
-      });
-    },
-    isDisabled: function() {
-      return $(selectpickerWidget.form.id).prop("disabled");
-    },
-    baseId:  selectpickerWidget.picker.frameId + "_options",
-    childId: selectpickerWidget.picker.frameId + "_options_child",
-    inputId: selectpickerWidget.picker.frameId + "_options_search",
-    base: function() {
-      var optionsBase;
-
-      if ($(this.baseId).length <= 0) {
-        optionsBase = $("<div>").prop({id: this.baseId.replace("#", "")}).append(this.search());
-        $(selectpickerWidget.picker.frameId).append(optionsBase);
-      }
-      else {
-        optionsBase = $(this.baseId);
-      }
-
-      if (optionsBase.find(this.childId).length <= 0) {
-        optionsBase
-          .append(
-            $("<ul>")
-              .prop({id: this.childId.replace("#", "")})
-              .addClass(selectpickerItems.cssClass.list)
-              .on("mouseover.selectpicker", function() {
-                $(selectpickerWidget.options.inputId).off("blur.selectpicker")
-              })
-              .on("mouseout.selectpicker", function() {
-                $(selectpickerWidget.options.inputId).on("blur.selectpicker", function() {
-                  selectpickerWidget.options.hide();
-                })
-              })
-          );
-      }
-      else {
-        optionsBase.find(this.childId).children().remove();
-      }
-
-      return optionsBase;
-    },
-    search: function() {
-      return $("<input>")
-        .addClass(selectpickerItems.cssClass.search)
-        .prop({
-          type: "text",
-          id:   this.inputId.replace("#", ""),
-          "autocomplete": "off"
-        })
-        .attr("autocomplete", "off");
-        // for IE bug; attr autocomplete is not work for html attributes; only autocomplete??
-    },
-    child: function(label, value) {
-      return $("<li>")
-        .data(selectpickerItems.dataKey, value)
-        .addClass(selectpickerItems.cssClass.item)
-        .append(
-          $("<a>")
-            .prop({href: "javascript:void(0)", tabIndex: -1})
-            .text(label)
-            .on("click.selectpicker", function(){
-              selectpickerWidget.form.set($(this).closest("li").data(selectpickerItems.dataKey));
-              selectpickerWidget.options.hide();
-            })
-        )
-    },
-    find: function(query) {
-      var that = this;
-
-      return $(selectpickerItems.select.searchWords).map(function(idx, val){
-        if (that.matchAll(query, val)) {
-          return {
-            value: selectpickerItems.select.values[idx],
-            label: selectpickerItems.select.labels[idx]
-          };
-        }
-      }).toArray();
-    },
-    matchAll: function(query, sequence) {
-      var regexes = [/.*/];
-
-      if (query.length > 0) {
-        regexes = $(query.split(/(?:\s|　)/)).map(function(idx, val){
-          return new RegExp(val, "i")
-        }).toArray();
-      }
-
-      var result = true
-
-      $.each(regexes, function(_, regex) {
-        if (!regex.test(sequence)) {
-          result = false
-          return
-        }
-      })
-
-      return result;
-    },
-    findCurrentPick: function() {
+    onKeydownOptions: function( event ) {
       var currentPick;
 
-      $(selectpickerWidget.options.childId).find("li").each(function() {
-        if ($(this).hasClass(selectpickerItems.cssClass.current)) {
-          currentPick = $(this);
-          return;
+      if ( event.keyCode == "13" || event.keyCode == "38" || event.keyCode == "40" ) {
+        currentPick = jQuery.selectpicker.widget.options.findCurrentPick( context );
+        currentPick = jQuery.selectpicker.widget.options.setCurrentPick( context, currentPick );
+      };
+
+      switch( event.keyCode ) {
+      case "13":
+        jQuery.selectpicker.widget.form.set( context, currentPick.data( config.items.dataKey ) );
+        jQuery.selectpicker.widget.options.hide( context );
+
+        return false;
+      case "38":
+      case "40":
+        var target = ( ( event.keyCode == "38" ) ? currentPick.prev() : currentPick.next() );
+
+        if ( target.length > 0 ) {
+          jQuery.selectpicker.widget.options.setCurrentPick( context, target );
+          currentPick.removeClass( config.items.cssClass.current );
         }
-      });
-
-      return currentPick;
+      }
     },
-    setCurrentPick: function(currentPick) {
-      if (typeof currentPick === "undefined") {
-        currentPick = selectpickerWidget.options.findCurrentPick() || $(selectpickerWidget.options.childId).children(":first");
-      }
-
-      if (currentPick.length != 0) {
-        currentPick.addClass(selectpickerItems.cssClass.current);
-
-        var scrollOption = {scrollTop: (currentPick.offset().top - currentPick.parent().children(":first").offset().top)};
-        currentPick.parent().animate(scrollOption, selectpickerItems.scrollDuration);
-      }
-
-      return currentPick;
+    onOuterClick: function( event ) {
+      jQuery( this ).each( function() {
+        jQuery( this ).prev().selectpickerOptionsClose();
+      });
     }
   };
 
-  if (typeof _options.callWidget !== "undefined") {
-    return selectpickerWidget.options[_options.callWidget]();
+  config.loaded = false;
+  config.events = events;
+
+  run();
+}
+
+jQuery.selectpicker.configure = function( context, options ) {
+  var name, tokens,
+      config = {},
+      noop = function(){};
+
+  options = jQuery.extend( {}, options );
+
+  name = jQuery.selectpicker.config.contextName( context );
+  config.items = jQuery.selectpicker.config.items( context, options );
+  tokens = jQuery.selectpicker.config.tokens( context, options );
+
+  jQuery.each( tokens, function( key, value ) {
+    config.items.select[ key ] = value;
+  });
+
+  jQuery.selectpicker.config.configs = jQuery.extend(
+    {},
+    jQuery.selectpicker.config.configs
+  );
+
+  jQuery.selectpicker.config.configs[ name ] = config;
+};
+
+jQuery.selectpicker.config = function( context ) {
+  var name = jQuery.selectpicker.config.contextName( context );
+  return jQuery.selectpicker.config.configs[ name ];
+};
+
+jQuery.extend(
+  jQuery.selectpicker.config,
+  {
+    contextName: function( context ) {
+      return context.prop( "name" );
+    },
+    items: function( context, options ) {
+      var name = jQuery.selectpicker.config.contextName( context ),
+          id   = context.eq( 0 ).prop( "id" ),
+          frameId = "#selectpicker_" + id + "_frame";
+
+      return {
+        select: {
+          id:   "#" + id,
+          name: name,
+        },
+        dataKey: "selectpicker_option_value",
+        scrollDuration: ( options.scrollDuration || 10 ),
+        tabIndex: ( options.tabIndex || context.prop( "tabIndex" ) || 0 ),
+        cssClass: {
+          base:    "selectpicker_base",
+          frame:   "selectpicker_frame",
+          label:   "selectpicker_label",
+          search:  "selectpicker_search",
+          list:    "selectpicker_list",
+          item:    "selectpicker_item",
+          open:    "selectpicker_label_open",
+          close:   "selectpicker_label_close",
+          current: "selectpicker_current_pick"
+        },
+        selector: {
+          picker: {
+            baseId:  "#selectpicker_" + id,
+            frameId: frameId,
+            labelId: "#selectpicker_" + id + "_label",
+          },
+          form: {
+            id: frameId + "_hidden",
+          },
+          options: {
+            baseId:  frameId + "options",
+            childId: frameId + "options_child",
+            inputId: frameId + "options_search",
+          }
+        },
+        callback: {
+          onPick: options.onPick || noop,
+          onLoad: options.onLoad || noop
+        }
+      };
+    },
+    tokens: function( context, options ) {
+      var map = {
+        labels:      [],
+        values:      [],
+        searchWords: []
+      };
+
+      context.find( "option" ).each( function( _, element ) {
+        var label      = element.text,
+            searchWord = label,
+            kana       = jQuery( element ).data().kana;
+
+        if ( typeof kana !== "undefined" && kana.toString().length > 0 ) {
+          searchWord = label + "," + kana;
+        }
+
+        map.labels.push( label );
+        map.values.push( jQuery( element ).val() );
+        map.searchWords.push( searchWord );
+      });
+
+      return map;
+    }
   }
-  else {
-    selectpickerWidget.picker.append();
-    selectpickerWidget.options.append(selectpickerWidget.options.find(""));
-    selectpickerWidget.form.append();
-    selectpickerWidget.options.hide();
+);
 
-    $(_this).selectpickerEnable();
+jQuery.selectpicker.widget = {};
 
-    $(selectpickerWidget.options.inputId).observeField(0.2, function() {
-      var query = $(this).val();
-      var results = selectpickerWidget.options.find(query);
-      selectpickerWidget.options.append( (results.length == 0) ? {label: ("not found for \"" + query + "\""), value: ""} : results);
+jQuery.selectpicker.widget.picker = {
+  append: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+
+    context
+      .prop( "disabled", true )
+      .hide()
+      .after(
+        jQuery( "<div>" )
+          .prop( { id: config.items.selector.picker.baseId.replace( "#", "" ) } )
+          .css( { position: "relative" } )
+          .addClass( config.items.cssClass.base )
+          .append(
+            jQuery( "<div>" )
+              .prop( { id: config.items.selector.picker.frameId.replace( "#", "" ) } )
+              .css( { position: "absolute", zIndex: 100 } )
+              .addClass( config.items.cssClass.frame )
+              .append(
+                jQuery( "<div>" )
+                  .prop( { id: config.items.selector.picker.labelId.replace( "#", "" ), tabIndex: config.items.tabIndex } )
+                  .addClass( config.items.cssClass.label )
+              )
+          )
+          .append(
+            jQuery( "<input>" )
+              .addClass( "fakeInput" )
+              .prop( { type: "text", tabIndex: -1 } )
+              .css( { width: 1, height: 1, border: 0, outline: 0 } )
+          )
+      );
+  }
+};
+
+jQuery.selectpicker.widget.form = {
+  append: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+
+    jQuery( config.items.selector.picker.frameId )
+      .append(
+        jQuery( "<input>" )
+          .prop( {
+            type: "hidden",
+            name: config.items.select.name,
+            id:   config.items.selector.form.id.replace( "#", "" )
+          })
+      );
+
+    this.set( jQuery( config.items.select.id ).val() );
+  },
+  set: function( context, value ) {
+    var label,
+        config = jQuery.selectpicker.config( context );
+
+    if ( typeof value === "undefined" ) {
+      value = jQuery( config.items.select.id ).children( ":first" ).val();
+    }
+
+    jQuery( config.items.select.id ).val( value );
+    label = jQuery( config.items.select.id ).find( ":selected" ).text()
+
+    jQuery( config.items.selector.form.id ).val( value );
+    jQuery( config.items.selector.picker.labelId ).text( label );
+
+    if ( config.loaded ) {
+      // XXX: fake input to make enter-key-form-submitable
+      jQuery( config.items.selector.picker.baseId ).find( ".fakeInput" ).focus().select()
+      config.items.callback.onPick.apply( context, [ value, label ] );
+    }
+    else {
+      config.items.callback.onLoad.apply( context, [ value, label ] );
+      config.loaded = true;
+    }
+  }
+};
+
+jQuery.selectpicker.widget.options = {
+  append: function( context, options ) {
+    var self = this,
+        base = self.base(),
+        config = jQuery.selectpicker.config( context );
+
+    jQuery( options ).each( function( _, option ) {
+      base.find( config.items.selector.options.childId ).append( self.child( option.label, option.value ) )
     });
 
-    $(selectpickerWidget.options.inputId).keydown(function(e) {
-      if (e.keyCode == "13" || e.keyCode == "38" || e.keyCode == "40") {
-        var currentPick = selectpickerWidget.options.setCurrentPick(selectpickerWidget.options.findCurrentPick());
+    jQuery.selectpicker.widget.options.setCurrentPick( context );
+  },
+  hide: function( context ) {
+    var config = jQuery.selectpicker.config( context );
 
-        if (e.keyCode == "13") {
-          selectpickerWidget.form.set(currentPick.data(selectpickerItems.dataKey));
-          selectpickerWidget.options.hide();
+    if ( jQuery(jQuery.selectpicker.widget.form.id ).is( ":disabled" ) ) {
+      return;
+    }
 
-          return false;
-        }
-        else {
-          var target = ((e.keyCode == "38") ? currentPick.prev() : currentPick.next());
+    jQuery( jQuery.selectpicker.widget.picker.frameId ).css( { zIndex: 100 } );
+    jQuery( config.items.selector.options.baseId ).hide();
+    jQuery( config.items.selector.picker.labelId )
+      .removeClass( config.items.cssClass.close )
+      .addClass( config.items.cssClass.open );
 
-          if (target.length > 0) {
-            selectpickerWidget.options.setCurrentPick(target);
-            currentPick.removeClass(selectpickerItems.cssClass.current);
-          }
-        }
+    jQuery( config.items.selector.options.inputId ).prop( { tabIndex: 0 } );
+    jQuery( config.items.selector.picker.labelId )
+      .prop( { tabIndex: config.items.tabIndex } )
+      .off( "focus.selectpicker" )
+      .on(  "focus.selectpicker", config.events.onFocusPicker );
+
+    setTimeout( function() {
+      jQuery( config.items.selector.picker.labelId ).off( "click.selectpicker" );
+    }, 300 );
+  },
+  show: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+
+    jQuery( config.items.selector.options.baseId ).show();
+    jQuery( config.items.selector.picker.frameId ).css( { zIndex: 999 } );
+    jQuery( config.items.selector.options.inputId ).focus().select();
+    jQuery( config.items.selector.picker.labelId )
+      .removeClass( config.items.cssClass.open )
+      .addClass( config.items.cssClass.close );
+
+    jQuery.selectpicker.widget.options.setCurrentPick( context );
+
+    jQuery( config.items.selector.picker.labelId )
+      .prop( { tabIndex: -1 } )
+      .off( "focus.selectpicker" );
+
+    setTimeout( function() {
+      jQuery( config.items.selector.picker.labelId ).on( "click.selectpicker", config.events.onClickPicker );
+    }, 300 );
+
+    jQuery( config.items.selector.options.inputId )
+      .prop( { tabIndex: config.items.tabIndex } )
+      .one( "blur.selectpicker", config.events.onBlurPicker );
+  },
+  toggle: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+
+    if ( jQuery( config.items.selector.picker.labelId ).hasClass( config.items.cssClass.open ) ) {
+      this.show();
+    }
+    else {
+      this.hide();
+    }
+  },
+  disable: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+
+    jQuery.selectpicker.widget.options.hide( context );
+    jQuery( config.items.selector.form.id ).prop( "disabled", true );
+    jQuery( config.items.selector.picker.labelId )
+      .prop( { tabIndex: -1 } )
+      .css( { opacity: 0.5 } )
+      .off( "focus.selectpicker" );
+  },
+  enable: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+
+    jQuery( config.items.selector.form.id ).prop( "disabled", false );
+    jQuery( config.items.selector.picker.labelId ).css( { opacity: 1 } );
+    jQuery( config.items.selector.picker.labelId ).on( "focus.selectpicker", config.events.onFocusPicker );
+  },
+  isDisabled: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+
+    return jQuery( config.items.selector.form.id ).prop( "disabled" );
+  },
+  base: function( context ) {
+    var optionsBase,
+        config = jQuery.selectpicker.config( context );
+
+    if ( jQuery( config.items.selector.options.baseId ).length <= 0 ) {
+      optionsBase = jQuery( "<div>" ).prop( {
+        id: config.items.selector.options.baseId.replace( "#", "" )
+      })
+      .append( this.search() );
+
+      jQuery( config.items.selector.picker.frameId ).append( optionsBase );
+    }
+    else {
+      optionsBase = jQuery( config.items.selector.options.baseId );
+    }
+
+    if ( optionsBase.find( config.items.selector.options.childId ).length <= 0 ) {
+      optionsBase
+        .append(
+          jQuery( "<ul>" )
+            .prop( { id: config.items.selector.options.childId.replace( "#", "" ) } )
+            .addClass( config.items.cssClass.list )
+            .on( "mouseover.selectpicker", config.events.onMouseoverOptions )
+            .on( "mouseout.selectpicker", config.events.onMouseoutOptions )
+        );
+    }
+    else {
+      optionsBase.find( config.items.selector.options.childId ).children().remove();
+    }
+
+    return optionsBase;
+  },
+  search: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+
+    return jQuery( "<input>" )
+      .addClass( config.items.cssClass.search )
+      .prop( {
+        type: "text",
+        id:   config.items.selector.options.inputId.replace( "#", "" ),
+        "autocomplete": "off"
+      })
+      .attr( "autocomplete", "off" );
+      // for IE bug; attr autocomplete is not work for html attributes; only autocomplete??
+  },
+  child: function( context, label, value ) {
+    var config = jQuery.selectpicker.config( context );
+
+    return jQuery( "<li>" )
+      .data( config.items.dataKey, value )
+      .addClass( config.items.cssClass.item )
+      .append(
+        jQuery( "<a>" )
+          .prop( { href: "javascript:void(0)", tabIndex: -1 } )
+          .text(label)
+          .on( "click.selectpicker", config.events.onClickOptions )
+      )
+  },
+  find: function( context, query ) {
+    var self = this;
+        config = jQuery.selectpicker.config( context );
+
+    return jQuery.map( config.items.select.searchWords, function( idx, val ) {
+      if ( self.matchAll( query, val ) ) {
+        return {
+          value: config.items.select.values[ idx ],
+          label: config.items.select.labels[ idx ]
+        };
+      }
+    });
+  },
+  matchAll: function( context, query, sequence ) {
+    var result,
+        regexes = [/.*/],
+        config = jQuery.selectpicker.config( context );
+
+    if ( query.length > 0 ) {
+      regexes = jQuery.map( query.split( /(?:\s|　)/ ), function( val ) {
+        return new RegExp( val, "i" );
+      });
+    }
+
+    result = true
+
+    jQuery.each( regexes, function( _, regex ) {
+      if ( !regex.test( sequence ) ) {
+        result = false
+        return
       }
     });
 
-    $("." + selectpickerItems.cssClass.base).outerOff("click.selectpicker");
-    $("." + selectpickerItems.cssClass.base).outerOn("click.selectpicker", function(e){
-      $(this).each(function(){
-        $(this).prev().selectpickerOptionsClose();
-      });
+    return result;
+  },
+  findCurrentPick: function( context ) {
+    var currentPick,
+        config = jQuery.selectpicker.config( context );
+
+    jQuery( config.items.selector.options.childId ).find( "li" ).each( function() {
+      if ( jQuery( this ).hasClass( config.items.cssClass.current ) ) {
+        currentPick = jQuery( this );
+        return;
+      }
     });
+
+    return currentPick;
+  },
+  setCurrentPick: function( context, currentPick ) {
+    var scrollOption = {},
+        config = jQuery.selectpicker.config( context );
+
+    if ( typeof currentPick === "undefined" ) {
+      currentPick = jQuery.selectpicker.widget.options.findCurrentPick( context ) || jQuery( config.items.selector.options.childId ).children( ":first" );
+    }
+
+    if ( currentPick.length != 0 ) {
+      currentPick.addClass( config.items.cssClass.current );
+
+      scrollOptions.scrollTop = currentPick.offset().top - currentPick.parent().children( ":first" ).offset().top;
+      currentPick.parent().animate( scrollOption, config.items.scrollDuration );
+    }
+
+    return currentPick;
   }
-}
+};
+
+jQuery.fn.selectpickerOptionsClose = function() {
+  jQuery.selectpicker.widget.options.hide( this );
+};
+
+jQuery.fn.selectpickerOptionsOpen = function() {
+  jQuery.selectpicker.widget.options.show( this );
+};
+
+jQuery.fn.selectpickerOptionsToggle = function() {
+  jQuery.selectpicker.widget.options.toggle( this );
+};
+
+jQuery.fn.selectpickerEnable = function() {
+  jQuery.selectpicker.widget.options.enable( this );
+};
+
+jQuery.fn.selectpickerDisable = function() {
+  jQuery.selectpicker.widget.options.disable( this );
+};
+
+jQuery.fn.selectpickerIsDisabled = function() {
+  return jQuery.selectpicker.widget.options.isDisabled( this );
+};
 
 if ( typeof jQuery.fn.observeField === "undefined" ) {
   // jquery.observe_field
