@@ -5,7 +5,26 @@ jQuery.fn.selectpicker = function( options ) {
 
   jQuery.selectpicker.configure( context, options );
   config = jQuery.selectpicker.config( context );
-  config.loaded = false;
+
+  function run() {
+    jQuery.selectpicker.widget.picker.append( context );
+    jQuery.selectpicker.widget.options.append( context, jQuery.selectpicker.widget.options.find( "" ) );
+    jQuery.selectpicker.widget.form.append( context );
+    jQuery.selectpicker.widget.options.hide( context );
+
+    context.selectpickerEnable();
+
+    jQuery( config.items.selector.options.inputId ).observeField( 0.2, function() {
+      var query = jQuery( this ).val();
+      var results = jQuery.selectpicker.widget.options.find( context, query );
+      jQuery.selectpicker.widget.options.append( context, ( results.length == 0 ) ? { label: ( "not found for \"" + query + "\"" ), value: "" } : results );
+    });
+
+    jQuery( config.items.selector.options.inputId ).on( "keydown", onKeydownOptions );
+
+    jQuery( "." + config.items.cssClass.base ).outerOff( "click.selectpicker" );
+    jQuery( "." + config.items.cssClass.base ).outerOn(  "click.selectpicker", config.events.onOuterClick );
+  }
 
   events = {
     onFocusPicker: function() {
@@ -21,7 +40,7 @@ jQuery.fn.selectpicker = function( options ) {
       jQuery( config.items.selector.options.inputId ).off( "blur.selectpicker" );
     },
     onMouseoutOptions: function() {
-      jQuery( config.items.selector.options.inputId ).on( "blur.selectpicker", events.onBlurPicker );
+      jQuery( config.items.selector.options.inputId ).on( "blur.selectpicker", config.events.onBlurPicker );
     },
     onClickOptions: function() {
       jQuery.selectpicker.widget.form.set( context, jQuery( this ).closest( "li" ).data( config.items.dataKey ) );
@@ -42,7 +61,7 @@ jQuery.fn.selectpicker = function( options ) {
 
         return false;
       case "38":
-      case: "40":
+      case "40":
         var target = ( ( event.keyCode == "38" ) ? currentPick.prev() : currentPick.next() );
 
         if ( target.length > 0 ) {
@@ -58,21 +77,8 @@ jQuery.fn.selectpicker = function( options ) {
     }
   };
 
-  jQuery.selectpicker.widget.picker.append( context );
-  jQuery.selectpicker.widget.options.append( context, jQuery.selectpicker.widget.options.find( "" ) );
-  jQuery.selectpicker.widget.form.append( context );
-  jQuery.selectpicker.widget.options.hide( context );
+  config.loaded = false;
+  config.events = events;
 
-  context.selectpickerEnable();
-
-  jQuery( config.items.selector.options.inputId ).observeField( 0.2, function() {
-    var query = jQuery( this ).val();
-    var results = jQuery.selectpicker.widget.options.find( context, query );
-    jQuery.selectpicker.widget.options.append( context, ( results.length == 0 ) ? { label: ( "not found for \"" + query + "\"" ), value: "" } : results );
-  });
-
-  jQuery( config.items.selector.options.inputId ).on( "keydown", onKeydownOptions );
-
-  jQuery( "." + config.items.cssClass.base ).outerOff( "click.selectpicker" );
-  jQuery( "." + config.items.cssClass.base ).outerOn(  "click.selectpicker", config.events.onOuterClick );
+  run();
 }
