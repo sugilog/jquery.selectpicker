@@ -72,16 +72,10 @@ jQuery.fn.selectpicker = function( options ) {
       if ( config.loaded ) {
         // XXX: fake input to make enter-key-form-submitable
         jQuery( config.items.selector.picker.baseId ).find( ".fakeInput" ).focus().select()
-
-        if ( typeof options.onPick !== "undefined" ) {
-          options.onPick.apply( context, [ value, label ] );
-        }
+        config.items.callback.onPick.apply( context, [ value, label ] );
       }
       else {
-        if ( typeof options.onLoad !== "undefined" ) {
-          options.onLoad.apply( context, [ value, label ] );
-        }
-
+        config.items.callback.onLoad.apply( context, [ value, label ] );
         config.loaded = true;
       }
     }

@@ -1,6 +1,7 @@
 jQuery.selectpicker.configure = function( context, options ) {
   var name, tokens,
-      config = {};
+      config = {},
+      noop = function(){};
 
   options = jQuery.extend( {}, options );
 
@@ -71,6 +72,8 @@ jQuery.extend(
           }
         },
         callback: {
+          onPick: options.onPick || noop,
+          onLoad: options.onLoad || noop
         }
       };
     },
