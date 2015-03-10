@@ -61,7 +61,7 @@ jQuery.selectpicker.widget.form = {
     }
 
     jQuery( config.items.select.id ).val( value );
-    label = config.items.labels[ config.items.values.indexOf( value ) ];
+    label = config.items.select.labels[ config.items.select.values.indexOf( value ) ];
 
     jQuery( config.items.selector.form.id ).val( value );
     jQuery( config.items.selector.picker.labelId ).text( label );
