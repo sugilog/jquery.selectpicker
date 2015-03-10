@@ -32,11 +32,13 @@ jQuery.extend(
       return context.prop( "name" );
     },
     items: function( context, options ) {
-      var name = jQuery.selectpicker.config.contextName( context );
+      var name = jQuery.selectpicker.config.contextName( context ),
+          id   = context.eq( 0 ).prop( "id" ),
+          frameId = "#selectpicker_" + id + "_frame";
 
       return {
         select: {
-          id:   "#" + context.eq( 0 ).prop( "id" ),
+          id:   "#" + id,
           name: name,
         },
         dataKey: "selectpicker_option_value",
@@ -54,6 +56,19 @@ jQuery.extend(
           current: "selectpicker_current_pick"
         },
         selector: {
+          picker: {
+            baseId:  "#selectpicker_" + id,
+            frameId: frameId,
+            labelId: "#selectpicker_" + id + "_label",
+          },
+          form: {
+            id: frameId + "_hidden",
+          },
+          options: {
+            baseId:  frameId + "options",
+            childId: frameId + "options_child",
+            inputId: frameId + "options_search",
+          }
         },
         callback: {
         }

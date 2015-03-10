@@ -9,26 +9,23 @@ jQuery.fn.selectpicker = function( options ) {
   var selectpickerWidget = {};
   selectpickerWidget.loaded = false;
   selectpickerWidget.picker = {
-    baseId:  "#selectpicker_" + config.items.select.id.replace( "#", "" ),
-    frameId: "#selectpicker_" + config.items.select.id.replace( "#", "" ) + "_frame",
-    labelId: "#selectpicker_" + config.items.select.id.replace( "#", "" ) + "_label",
     append: function() {
       context
         .prop( "disabled", true )
         .hide()
         .after(
           jQuery( "<div>" )
-            .prop( { id: this.baseId.replace( "#", "" ) } )
+            .prop( { id: config.items.selector.picker.baseId.replace( "#", "" ) } )
             .css( { position: "relative" } )
             .addClass( config.items.cssClass.base )
             .append(
               jQuery( "<div>" )
-                .prop( { id: this.frameId.replace( "#", "" ) } )
+                .prop( { id: config.items.selector.picker.frameId.replace( "#", "" ) } )
                 .css( { position: "absolute", zIndex: 100 } )
                 .addClass( config.items.cssClass.frame )
                 .append(
                   jQuery( "<div>" )
-                    .prop( { id: this.labelId.replace( "#", "" ), tabIndex: config.items.tabIndex } )
+                    .prop( { id: config.items.selector.picker.labelId.replace( "#", "" ), tabIndex: config.items.tabIndex } )
                     .addClass( config.items.cssClass.label )
                 )
             )
@@ -42,15 +39,14 @@ jQuery.fn.selectpicker = function( options ) {
     }
   };
   selectpickerWidget.form = {
-    id: selectpickerWidget.picker.frameId + "_hidden",
     append: function() {
-      jQuery( selectpickerWidget.picker.frameId )
+      jQuery( config.items.selector.picker.frameId )
         .append(
           jQuery( "<input>" )
             .prop( {
               type: "hidden",
               name: config.items.select.name,
-              id:   this.id.replace( "#", "" )
+              id:   config.items.selector.form.id.replace( "#", "" )
             })
         );
 
@@ -65,12 +61,12 @@ jQuery.fn.selectpicker = function( options ) {
 
       var label = jQuery( config.items.select.id ).find( ":selected" ).text()
 
-      jQuery( this.id ).val( value );
-      jQuery( selectpickerWidget.picker.labelId ).text( label );
+      jQuery( config.items.selector.form.id ).val( value );
+      jQuery( config.items.selector.picker.labelId ).text( label );
 
       if ( selectpickerWidget.loaded ) {
         // XXX: fake input to make enter-key-form-submitable
-        jQuery( selectpickerWidget.picker.baseId ).find( ".fakeInput" ).focus().select()
+        jQuery( config.items.selector.picker.baseId ).find( ".fakeInput" ).focus().select()
 
         if ( typeof options.onPick !== "undefined" ) {
           options.onPick.apply( context, [ value, label ] );
@@ -91,7 +87,7 @@ jQuery.fn.selectpicker = function( options ) {
           base = self.base();
 
       jQuery( options ).each( function( _, option ) {
-        base.find( self.childId ).append( self.child( option.label, option.value ) )
+        base.find( config.items.selector.options.childId ).append( self.child( option.label, option.value ) )
       });
 
       selectpickerWidget.options.setCurrentPick();
@@ -102,13 +98,13 @@ jQuery.fn.selectpicker = function( options ) {
       }
 
       jQuery( selectpickerWidget.picker.frameId ).css( { zIndex: 100 } );
-      jQuery( this.baseId ).hide();
-      jQuery( selectpickerWidget.picker.labelId )
+      jQuery( config.items.selector.options.baseId ).hide();
+      jQuery( config.items.selector.picker.labelId )
         .removeClass( config.items.cssClass.close )
         .addClass( config.items.cssClass.open );
 
-      jQuery( selectpickerWidget.options.inputId ).prop( { tabIndex: 0 } );
-      jQuery( selectpickerWidget.picker.labelId )
+      jQuery( config.items.selector.options.inputId ).prop( { tabIndex: 0 } );
+      jQuery( config.items.selector.picker.labelId )
         .prop( { tabIndex: config.items.tabIndex } )
         .off( "focus.selectpicker" )
         .on(  "focus.selectpicker", function(){
@@ -116,38 +112,38 @@ jQuery.fn.selectpicker = function( options ) {
         })
 
       setTimeout( function() {
-        jQuery( selectpickerWidget.picker.labelId ).off( "click.selectpicker" );
+        jQuery( config.items.selector.picker.labelId ).off( "click.selectpicker" );
       }, 300 );
     },
     show: function() {
-      jQuery( this.baseId ).show();
-      jQuery( selectpickerWidget.picker.frameId ).css( { zIndex: 999 } );
-      jQuery( this.inputId ).focus().select();
-      jQuery( selectpickerWidget.picker.labelId )
+      jQuery( config.items.selector.options.baseId ).show();
+      jQuery( config.items.selector.picker.frameId ).css( { zIndex: 999 } );
+      jQuery( config.items.selector.options.inputId ).focus().select();
+      jQuery( config.items.selector.picker.labelId )
         .removeClass( config.items.cssClass.open )
         .addClass( config.items.cssClass.close );
 
       selectpickerWidget.options.setCurrentPick();
 
-      jQuery( selectpickerWidget.picker.labelId )
+      jQuery( config.items.selector.picker.labelId )
         .prop( { tabIndex: -1 } )
         .off( "focus.selectpicker" );
 
       setTimeout( function() {
-        jQuery( selectpickerWidget.picker.labelId )
+        jQuery( config.items.selector.picker.labelId )
           .on( "click.selectpicker", function(){
             selectpickerWidget.options.hide();
           });
       }, 300 );
 
-      jQuery( selectpickerWidget.options.inputId )
+      jQuery( config.items.selector.options.inputId )
         .prop( { tabIndex: config.items.tabIndex } )
         .one( "blur.selectpicker", function() {
           selectpickerWidget.options.hide();
         });
     },
     toggle: function() {
-      if ( jQuery( selectpickerWidget.picker.labelId ).hasClass( config.items.cssClass.open ) ) {
+      if ( jQuery( config.items.selector.picker.labelId ).hasClass( config.items.cssClass.open ) ) {
         this.show();
       }
       else {
@@ -156,54 +152,55 @@ jQuery.fn.selectpicker = function( options ) {
     },
     disable: function() {
       this.hide();
-      jQuery( selectpickerWidget.form.id ).prop( "disabled", true );
-      jQuery( selectpickerWidget.picker.labelId )
+      jQuery( config.items.selector.form.id ).prop( "disabled", true );
+      jQuery( config.items.selector.picker.labelId )
         .prop( { tabIndex: -1 } )
         .css( { opacity: 0.5 } )
         .off( "focus.selectpicker" );
     },
     enable: function() {
-      jQuery( selectpickerWidget.form.id ).prop( "disabled", false );
-      jQuery( selectpickerWidget.picker.labelId ).css( { opacity: 1 } );
-      jQuery( selectpickerWidget.picker.labelId ).on( "focus.selectpicker", function() {
+      jQuery( config.items.selector.form.id ).prop( "disabled", false );
+      jQuery( config.items.selector.picker.labelId ).css( { opacity: 1 } );
+      jQuery( config.items.selector.picker.labelId ).on( "focus.selectpicker", function() {
         selectpickerWidget.options.show();
       });
     },
     isDisabled: function() {
-      return jQuery( selectpickerWidget.form.id ).prop( "disabled" );
+      return jQuery( config.items.selector.form.id ).prop( "disabled" );
     },
-    baseId:  selectpickerWidget.picker.frameId + "options",
-    childId: selectpickerWidget.picker.frameId + "options_child",
-    inputId: selectpickerWidget.picker.frameId + "options_search",
     base: function() {
       var optionsBase;
 
-      if ( jQuery( this.baseId ).length <= 0 ) {
-        optionsBase = jQuery( "<div>" ).prop( { id: this.baseId.replace( "#", "" ) } ).append( this.search() );
-        jQuery( selectpickerWidget.picker.frameId ).append( optionsBase );
+      if ( jQuery( config.items.selector.options.baseId ).length <= 0 ) {
+        optionsBase = jQuery( "<div>" ).prop( {
+          id: config.items.selector.options.baseId.replace( "#", "" )
+        })
+        .append( this.search() );
+
+        jQuery( config.items.selector.picker.frameId ).append( optionsBase );
       }
       else {
-        optionsBase = jQuery( this.baseId );
+        optionsBase = jQuery( config.items.selector.options.baseId );
       }
 
-      if ( optionsBase.find( this.childId ).length <= 0 ) {
+      if ( optionsBase.find( config.items.selector.options.childId ).length <= 0 ) {
         optionsBase
           .append(
             jQuery( "<ul>" )
-              .prop( { id: this.childId.replace( "#", "" ) } )
+              .prop( { id: config.items.selector.options.childId.replace( "#", "" ) } )
               .addClass( config.items.cssClass.list )
               .on( "mouseover.selectpicker", function() {
-                jQuery( selectpickerWidget.options.inputId ).off( "blur.selectpicker" )
+                jQuery( config.items.selector.options.inputId ).off( "blur.selectpicker" )
               })
               .on( "mouseout.selectpicker", function() {
-                jQuery( selectpickerWidget.options.inputId ).on( "blur.selectpicker", function() {
+                jQuery( config.items.selector.options.inputId ).on( "blur.selectpicker", function() {
                   selectpickerWidget.options.hide();
                 })
               })
           );
       }
       else {
-        optionsBase.find( this.childId ).children().remove();
+        optionsBase.find( config.items.selector.options.childId ).children().remove();
       }
 
       return optionsBase;
@@ -213,10 +210,10 @@ jQuery.fn.selectpicker = function( options ) {
         .addClass( config.items.cssClass.search )
         .prop( {
           type: "text",
-          id:   this.inputId.replace( "#", "" ),
+          id:   config.items.selector.options.inputId.replace( "#", "" ),
           "autocomplete": "off"
         })
-        .attr("autocomplete", "off");
+        .attr( "autocomplete", "off" );
         // for IE bug; attr autocomplete is not work for html attributes; only autocomplete??
     },
     child: function( label, value ) {
@@ -268,7 +265,7 @@ jQuery.fn.selectpicker = function( options ) {
     findCurrentPick: function() {
       var currentPick;
 
-      jQuery( selectpickerWidget.options.childId ).find( "li" ).each( function() {
+      jQuery( config.items.selector.options.childId ).find( "li" ).each( function() {
         if ( jQuery( this ).hasClass( config.items.cssClass.current ) ) {
           currentPick = jQuery( this );
           return;
@@ -279,7 +276,7 @@ jQuery.fn.selectpicker = function( options ) {
     },
     setCurrentPick: function( currentPick ) {
       if ( typeof currentPick === "undefined" ) {
-        currentPick = selectpickerWidget.options.findCurrentPick() || jQuery( selectpickerWidget.options.childId ).children( ":first" );
+        currentPick = selectpickerWidget.options.findCurrentPick() || jQuery( config.items.selector.options.childId ).children( ":first" );
       }
 
       if ( currentPick.length != 0 ) {
@@ -305,13 +302,13 @@ jQuery.fn.selectpicker = function( options ) {
 
     context.selectpickerEnable();
 
-    jQuery( selectpickerWidget.options.inputId ).observeField( 0.2, function() {
+    jQuery( config.items.selector.options.inputId ).observeField( 0.2, function() {
       var query = jQuery( this ).val();
       var results = selectpickerWidget.options.find( query );
       selectpickerWidget.options.append( ( results.length == 0 ) ? { label: ( "not found for \"" + query + "\"" ), value: "" } : results );
     });
 
-    jQuery( selectpickerWidget.options.inputId ).on( "keydown", function( event ) {
+    jQuery( config.items.selector.options.inputId ).on( "keydown", function( event ) {
       if ( event.keyCode == "13" || event.keyCode == "38" || event.keyCode == "40" ) {
         var currentPick = selectpickerWidget.options.setCurrentPick( selectpickerWidget.options.findCurrentPick() );
 
