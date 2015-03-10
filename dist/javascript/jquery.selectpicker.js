@@ -33,7 +33,7 @@ jQuery.fn.selectpicker = function( options ) {
       jQuery.selectpicker.widget.options.append( context, results );
     });
 
-    jQuery( config.items.selector.options.inputId ).on( "keydown", config.events.onKeydownOptions );
+    jQuery( config.items.selector.options.inputId ).on( "keydown.selectpicker", config.events.onKeydownOptions );
 
     jQuery( "." + config.items.cssClass.base ).outerOff( "click.selectpicker" );
     jQuery( "." + config.items.cssClass.base ).outerOn(  "click.selectpicker", config.events.onOuterClick );
@@ -59,20 +59,21 @@ jQuery.fn.selectpicker = function( options ) {
       config.events.onSetValue( context, jQuery( this ).closest( "li" ).data( config.items.dataKey ) );
     },
     onKeydownOptions: function( event ) {
-      var currentPick;
+      var currentPick,
+          keyCode = event.keyCode.toString();
 
-      if ( event.keyCode == "13" || event.keyCode == "38" || event.keyCode == "40" ) {
+      if ( keyCode === "13" || keyCode === "38" || keyCode === "40" ) {
         currentPick = jQuery.selectpicker.widget.options.findCurrentPick( context );
         currentPick = jQuery.selectpicker.widget.options.setCurrentPick( context, currentPick );
       };
 
-      switch( event.keyCode ) {
+      switch( keyCode ) {
       case "13":
         config.events.onSetValue( context, currentPick.data( config.items.dataKey ) );
         return false;
       case "38":
       case "40":
-        var target = ( ( event.keyCode == "38" ) ? currentPick.prev() : currentPick.next() );
+        var target = ( ( keyCode == "38" ) ? currentPick.prev() : currentPick.next() );
 
         if ( target.length > 0 ) {
           jQuery.selectpicker.widget.options.setCurrentPick( context, target );
@@ -506,6 +507,22 @@ jQuery.selectpicker.util = {
   change: function( context, pickItem ) {
     var config = jQuery.selectpicker.config( context );
     config.events.onSetValue( context, pickItem );
+  },
+  deselect: function( context, deselectItem ) {
+    var current,
+        config = jQuery.selectpicker.config( context );
+
+    current = jQuery.selectpicker.widget.options.findCurrentPick( context );
+
+    if ( current.length === 0 ) {
+      return
+    }
+
+    current = current.data( config.items.dataKey );
+
+    if ( current === deselectItem ) {
+      config.events.onSetValue( context, "" );
+    };
   },
   optionsClose: function( context ) {
     jQuery.selectpicker.widget.options.hide( context );
