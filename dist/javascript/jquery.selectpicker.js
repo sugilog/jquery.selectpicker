@@ -268,7 +268,7 @@ jQuery.selectpicker.widget.form = {
     }
 
     jQuery( config.items.select.id ).val( value );
-    label = jQuery( config.items.select.id ).find( ":selected" ).text()
+    label = config.items.labels[ config.items.values.indexOf( value ) ];
 
     jQuery( config.items.selector.form.id ).val( value );
     jQuery( config.items.selector.picker.labelId ).text( label );
