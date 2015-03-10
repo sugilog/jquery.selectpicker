@@ -8,19 +8,24 @@ jQuery.fn.selectpicker = function( options ) {
 
   function run() {
     jQuery.selectpicker.widget.picker.append( context );
-    jQuery.selectpicker.widget.options.append( context, jQuery.selectpicker.widget.options.find( "" ) );
+    jQuery.selectpicker.widget.options.append( context, jQuery.selectpicker.widget.options.find( context, "" ) );
     jQuery.selectpicker.widget.form.append( context );
     jQuery.selectpicker.widget.options.hide( context );
 
     context.selectpickerEnable();
 
     jQuery( config.items.selector.options.inputId ).observeField( 0.2, function() {
-      var query = jQuery( this ).val();
-      var results = jQuery.selectpicker.widget.options.find( context, query );
-      jQuery.selectpicker.widget.options.append( context, ( results.length == 0 ) ? { label: ( "not found for \"" + query + "\"" ), value: "" } : results );
+      var query = jQuery( this ).val(),
+          results = jQuery.selectpicker.widget.options.find( context, query );
+
+      if ( results.length === 0 ) {
+        results = { label: ( "not found for \"" + query + "\"" ), value: "" };
+      }
+
+      jQuery.selectpicker.widget.options.append( context, results );
     });
 
-    jQuery( config.items.selector.options.inputId ).on( "keydown", onKeydownOptions );
+    jQuery( config.items.selector.options.inputId ).on( "keydown", config.events.onKeydownOptions );
 
     jQuery( "." + config.items.cssClass.base ).outerOff( "click.selectpicker" );
     jQuery( "." + config.items.cssClass.base ).outerOn(  "click.selectpicker", config.events.onOuterClick );

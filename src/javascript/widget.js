@@ -19,14 +19,17 @@ jQuery.selectpicker.widget.picker = {
               .addClass( config.items.cssClass.frame )
               .append(
                 jQuery( "<div>" )
-                  .prop( { id: config.items.selector.picker.labelId.replace( "#", "" ), tabIndex: config.items.tabIndex } )
+                  .prop( {
+                    id: config.items.selector.picker.labelId.replace( "#", "" ),
+                    tabindex: config.items.tabindex
+                  })
                   .addClass( config.items.cssClass.label )
               )
           )
           .append(
             jQuery( "<input>" )
               .addClass( "fakeInput" )
-              .prop( { type: "text", tabIndex: -1 } )
+              .prop( { type: "text", tabindex: -1 } )
               .css( { width: 1, height: 1, border: 0, outline: 0 } )
           )
       );
@@ -47,7 +50,7 @@ jQuery.selectpicker.widget.form = {
           })
       );
 
-    this.set( jQuery( config.items.select.id ).val() );
+    jQuery.selectpicker.widget.form.set( context, jQuery( config.items.select.id ).val() );
   },
   set: function( context, value ) {
     var label,
@@ -77,12 +80,11 @@ jQuery.selectpicker.widget.form = {
 
 jQuery.selectpicker.widget.options = {
   append: function( context, options ) {
-    var self = this,
-        base = self.base(),
+    var base = jQuery.selectpicker.widget.options.base( context ),
         config = jQuery.selectpicker.config( context );
 
     jQuery( options ).each( function( _, option ) {
-      base.find( config.items.selector.options.childId ).append( self.child( option.label, option.value ) )
+      base.find( config.items.selector.options.childId ).append( jQuery.selectpicker.widget.options.child( context, option.label, option.value ) )
     });
 
     jQuery.selectpicker.widget.options.setCurrentPick( context );
@@ -94,15 +96,15 @@ jQuery.selectpicker.widget.options = {
       return;
     }
 
-    jQuery( jQuery.selectpicker.widget.picker.frameId ).css( { zIndex: 100 } );
+    jQuery( config.items.selector.picker.frameId ).css( { zIndex: 100 } );
     jQuery( config.items.selector.options.baseId ).hide();
     jQuery( config.items.selector.picker.labelId )
       .removeClass( config.items.cssClass.close )
       .addClass( config.items.cssClass.open );
 
-    jQuery( config.items.selector.options.inputId ).prop( { tabIndex: 0 } );
+    jQuery( config.items.selector.options.inputId ).prop( { tabindex: 0 } );
     jQuery( config.items.selector.picker.labelId )
-      .prop( { tabIndex: config.items.tabIndex } )
+      .prop( { tabindex: config.items.tabindex } )
       .off( "focus.selectpicker" )
       .on(  "focus.selectpicker", config.events.onFocusPicker );
 
@@ -123,7 +125,7 @@ jQuery.selectpicker.widget.options = {
     jQuery.selectpicker.widget.options.setCurrentPick( context );
 
     jQuery( config.items.selector.picker.labelId )
-      .prop( { tabIndex: -1 } )
+      .prop( { tabindex: -1 } )
       .off( "focus.selectpicker" );
 
     setTimeout( function() {
@@ -131,17 +133,17 @@ jQuery.selectpicker.widget.options = {
     }, 300 );
 
     jQuery( config.items.selector.options.inputId )
-      .prop( { tabIndex: config.items.tabIndex } )
+      .prop( { tabindex: config.items.tabindex } )
       .one( "blur.selectpicker", config.events.onBlurPicker );
   },
   toggle: function( context ) {
     var config = jQuery.selectpicker.config( context );
 
     if ( jQuery( config.items.selector.picker.labelId ).hasClass( config.items.cssClass.open ) ) {
-      this.show();
+      jQuery.selectpicker.widget.options.show( context );
     }
     else {
-      this.hide();
+      jQuery.selectpicker.widget.options.hide( context );
     }
   },
   disable: function( context ) {
@@ -149,21 +151,25 @@ jQuery.selectpicker.widget.options = {
 
     jQuery.selectpicker.widget.options.hide( context );
     jQuery( config.items.selector.form.id ).prop( "disabled", true );
-    jQuery( config.items.selector.picker.labelId )
-      .prop( { tabIndex: -1 } )
-      .css( { opacity: 0.5 } )
-      .off( "focus.selectpicker" );
+
+    setTimeout( function() {
+      jQuery( config.items.selector.picker.labelId )
+        .css( { opacity: 0.5 } )
+        .prop( { tabindex: -1 } )
+        .off( "focus.selectpicker" );
+    }, 0 );
   },
   enable: function( context ) {
     var config = jQuery.selectpicker.config( context );
 
     jQuery( config.items.selector.form.id ).prop( "disabled", false );
-    jQuery( config.items.selector.picker.labelId ).css( { opacity: 1 } );
-    jQuery( config.items.selector.picker.labelId ).on( "focus.selectpicker", config.events.onFocusPicker );
+    jQuery( config.items.selector.picker.labelId )
+      .css( { opacity: 1 } )
+      .off( "focus.selectpicker" )
+      .on(  "focus.selectpicker", config.events.onFocusPicker );
   },
   isDisabled: function( context ) {
     var config = jQuery.selectpicker.config( context );
-
     return jQuery( config.items.selector.form.id ).prop( "disabled" );
   },
   base: function( context ) {
@@ -174,7 +180,7 @@ jQuery.selectpicker.widget.options = {
       optionsBase = jQuery( "<div>" ).prop( {
         id: config.items.selector.options.baseId.replace( "#", "" )
       })
-      .append( this.search() );
+      .append( jQuery.selectpicker.widget.options.search( context ) );
 
       jQuery( config.items.selector.picker.frameId ).append( optionsBase );
     }
@@ -219,17 +225,16 @@ jQuery.selectpicker.widget.options = {
       .addClass( config.items.cssClass.item )
       .append(
         jQuery( "<a>" )
-          .prop( { href: "javascript:void(0)", tabIndex: -1 } )
-          .text(label)
+          .prop( { href: "javascript:void(0)", tabindex: -1 } )
+          .text( label )
           .on( "click.selectpicker", config.events.onClickOptions )
       )
   },
   find: function( context, query ) {
-    var self = this;
-        config = jQuery.selectpicker.config( context );
+    var config = jQuery.selectpicker.config( context );
 
-    return jQuery.map( config.items.select.searchWords, function( idx, val ) {
-      if ( self.matchAll( query, val ) ) {
+    return jQuery.map( config.items.select.searchWords, function( val, idx ) {
+      if ( jQuery.selectpicker.widget.options.matchAll( context, query, val ) ) {
         return {
           value: config.items.select.values[ idx ],
           label: config.items.select.labels[ idx ]
@@ -283,7 +288,7 @@ jQuery.selectpicker.widget.options = {
     if ( currentPick.length != 0 ) {
       currentPick.addClass( config.items.cssClass.current );
 
-      scrollOptions.scrollTop = currentPick.offset().top - currentPick.parent().children( ":first" ).offset().top;
+      scrollOption.scrollTop = currentPick.offset().top - currentPick.parent().children( ":first" ).offset().top;
       currentPick.parent().animate( scrollOption, config.items.scrollDuration );
     }
 

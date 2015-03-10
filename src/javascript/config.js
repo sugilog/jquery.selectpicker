@@ -1,7 +1,6 @@
 jQuery.selectpicker.configure = function( context, options ) {
   var name, tokens,
-      config = {},
-      noop = function(){};
+      config = {};
 
   options = jQuery.extend( {}, options );
 
@@ -35,7 +34,8 @@ jQuery.extend(
     items: function( context, options ) {
       var name = jQuery.selectpicker.config.contextName( context ),
           id   = context.eq( 0 ).prop( "id" ),
-          frameId = "#selectpicker_" + id + "_frame";
+          frameId = "#selectpicker_" + id + "_frame",
+          noop = function(){};
 
       return {
         select: {
@@ -44,7 +44,7 @@ jQuery.extend(
         },
         dataKey: "selectpicker_option_value",
         scrollDuration: ( options.scrollDuration || 10 ),
-        tabIndex: ( options.tabIndex || context.prop( "tabIndex" ) || 0 ),
+        tabindex: ( options.tabindex || options.tabIndex || context.prop( "tabindex" ) || 0 ),
         cssClass: {
           base:    "selectpicker_base",
           frame:   "selectpicker_frame",
