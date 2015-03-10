@@ -1,18 +1,23 @@
 jQuery.fn.selectpickerOptionsClose = function() {
-  this.selectpicker( { callWidget: "hide" } );
+  jQuery.selectpicker.widget.options.hide( this );
 };
+
 jQuery.fn.selectpickerOptionsOpen = function() {
-  this.selectpicker( { callWidget: "show" } );
+  jQuery.selectpicker.widget.options.show( this );
 };
+
 jQuery.fn.selectpickerOptionsToggle = function() {
-  this.selectpicker( { callWidget: "toggle" } );
+  jQuery.selectpicker.widget.options.toggle( this );
 };
+
 jQuery.fn.selectpickerEnable = function() {
-  this.selectpicker( { callWidget: "enable" } );
+  jQuery.selectpicker.widget.options.enable( this );
 };
+
 jQuery.fn.selectpickerDisable = function() {
-  this.selectpicker( { callWidget: "disable" } );
+  jQuery.selectpicker.widget.options.disable( this );
 };
+
 jQuery.fn.selectpickerIsDisabled = function() {
-  return this.selectpicker( { callWidget: "isDisabled" } );
+  return jQuery.selectpicker.widget.options.isDisabled( this );
 };

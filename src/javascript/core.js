@@ -58,26 +58,21 @@ jQuery.fn.selectpicker = function( options ) {
     }
   };
 
-  if ( typeof options.callWidget !== "undefined" ) {
-    return jQuery.selectpicker.widget.options[ options.callWidget ]( context );
-  }
-  else {
-    jQuery.selectpicker.widget.picker.append( context );
-    jQuery.selectpicker.widget.options.append( context, jQuery.selectpicker.widget.options.find( "" ) );
-    jQuery.selectpicker.widget.form.append( context );
-    jQuery.selectpicker.widget.options.hide( context );
+  jQuery.selectpicker.widget.picker.append( context );
+  jQuery.selectpicker.widget.options.append( context, jQuery.selectpicker.widget.options.find( "" ) );
+  jQuery.selectpicker.widget.form.append( context );
+  jQuery.selectpicker.widget.options.hide( context );
 
-    context.selectpickerEnable();
+  context.selectpickerEnable();
 
-    jQuery( config.items.selector.options.inputId ).observeField( 0.2, function() {
-      var query = jQuery( this ).val();
-      var results = jQuery.selectpicker.widget.options.find( context, query );
-      jQuery.selectpicker.widget.options.append( context, ( results.length == 0 ) ? { label: ( "not found for \"" + query + "\"" ), value: "" } : results );
-    });
+  jQuery( config.items.selector.options.inputId ).observeField( 0.2, function() {
+    var query = jQuery( this ).val();
+    var results = jQuery.selectpicker.widget.options.find( context, query );
+    jQuery.selectpicker.widget.options.append( context, ( results.length == 0 ) ? { label: ( "not found for \"" + query + "\"" ), value: "" } : results );
+  });
 
-    jQuery( config.items.selector.options.inputId ).on( "keydown", onKeydownOptions );
+  jQuery( config.items.selector.options.inputId ).on( "keydown", onKeydownOptions );
 
-    jQuery( "." + config.items.cssClass.base ).outerOff( "click.selectpicker" );
-    jQuery( "." + config.items.cssClass.base ).outerOn(  "click.selectpicker", config.events.onOuterClick );
-  }
+  jQuery( "." + config.items.cssClass.base ).outerOff( "click.selectpicker" );
+  jQuery( "." + config.items.cssClass.base ).outerOn(  "click.selectpicker", config.events.onOuterClick );
 }
