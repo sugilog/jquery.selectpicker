@@ -1,5 +1,5 @@
 /*!
- * jquery.selectpicker v0.1.2
+ * jquery.selectpicker v0.1.3
  *
  * Copyright (c) Takayuki Sugita, https://github.com/sugilog/jquery.selectpicker
  * Released under the MIT License
