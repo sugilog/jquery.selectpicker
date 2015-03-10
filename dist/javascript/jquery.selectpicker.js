@@ -20,8 +20,7 @@ jQuery.fn.selectpicker = function( options ) {
     jQuery.selectpicker.widget.options.append( context, jQuery.selectpicker.widget.options.find( context, "" ) );
     jQuery.selectpicker.widget.form.append( context );
     jQuery.selectpicker.widget.options.hide( context );
-
-    context.selectpickerEnable();
+    jQuery.selectpicker.util.enable( context );
 
     jQuery( config.items.selector.options.inputId ).observeField( 0.2, function() {
       var query = jQuery( this ).val(),
@@ -83,7 +82,7 @@ jQuery.fn.selectpicker = function( options ) {
     },
     onOuterClick: function( event ) {
       jQuery( this ).each( function() {
-        jQuery( this ).prev().selectpickerOptionsClose();
+        jQuery.selectpicker.util.optionsClose( jQuery( this ).prev() );
       });
     },
     onSetValue: function( context, pickItem ) {
@@ -503,36 +502,79 @@ jQuery.selectpicker.widget.options = {
   }
 };
 
-jQuery.fn.selectpickerOptionsClose = function() {
-  jQuery.selectpicker.widget.options.hide( this );
-};
-
-jQuery.fn.selectpickerOptionsOpen = function() {
-  jQuery.selectpicker.widget.options.show( this );
-};
-
-jQuery.fn.selectpickerOptionsToggle = function() {
-  jQuery.selectpicker.widget.options.toggle( this );
-};
-
-jQuery.fn.selectpickerEnable = function() {
-  jQuery.selectpicker.widget.options.enable( this );
-};
-
-jQuery.fn.selectpickerDisable = function() {
-  jQuery.selectpicker.widget.options.disable( this );
-};
-
-jQuery.fn.selectpickerIsDisabled = function() {
-  return jQuery.selectpicker.widget.options.isDisabled( this );
-};
-
 jQuery.selectpicker.util = {
   change: function( context, pickItem ) {
     var config = jQuery.selectpicker.config( context );
     config.events.onSetValue( context, pickItem );
+  },
+  optionsClose: function( context ) {
+    jQuery.selectpicker.widget.options.hide( context );
+  },
+  optionsOpen: function( context ) {
+    jQuery.selectpicker.widget.options.show( context );
+  },
+  optionsToggle: function( context ) {
+    jQuery.selectpicker.widget.options.toggle( context );
+  },
+  enable: function( context ) {
+    jQuery.selectpicker.widget.options.enable( context );
+  },
+  disable: function( context ) {
+    jQuery.selectpicker.widget.options.disable( context );
+  },
+  isDisabled: function( context ) {
+    return jQuery.selectpicker.widget.options.isDisabled( context );
   }
 }
+
+jQuery.fn.selectpickerOptionsClose = function() {
+  if ( window.console ) {
+    window.console.log( "DEPRECATED: use jQuery.selectpicker.util.optionsClose" );
+  }
+
+  jQuery.selectpicker.util.optionsClose( this );
+};
+
+jQuery.fn.selectpickerOptionsOpen = function() {
+  if ( window.console ) {
+    window.console.log( "DEPRECATED: use jQuery.selectpicker.util.optionsOpen" );
+  }
+
+  jQuery.selectpicker.util.optionsOpen( this );
+};
+
+jQuery.fn.selectpickerOptionsToggle = function() {
+  if ( window.console ) {
+    window.console.log( "DEPRECATED: use jQuery.selectpicker.util.optionsToggle" );
+  }
+
+  jQuery.selectpicker.util.optionsToggle( this );
+};
+
+jQuery.fn.selectpickerEnable = function() {
+  if ( window.console ) {
+    window.console.log( "DEPRECATED: use jQuery.selectpicker.util.enable" );
+  }
+
+  jQuery.selectpicker.util.enable( this );
+};
+
+jQuery.fn.selectpickerDisable = function() {
+  if ( window.console ) {
+    window.console.log( "DEPRECATED: use jQuery.selectpicker.util.disable" );
+  }
+
+  jQuery.selectpicker.util.disable( this );
+};
+
+jQuery.fn.selectpickerIsDisabled = function() {
+  if ( window.console ) {
+    window.console.log( "DEPRECATED: use jQuery.selectpicker.util.isDisabled" );
+  }
+
+  jQuery.selectpicker.util.isDisabled( this );
+};
+
 
 if ( typeof jQuery.fn.observeField === "undefined" ) {
   // jquery.observe_field

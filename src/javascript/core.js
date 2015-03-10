@@ -11,8 +11,7 @@ jQuery.fn.selectpicker = function( options ) {
     jQuery.selectpicker.widget.options.append( context, jQuery.selectpicker.widget.options.find( context, "" ) );
     jQuery.selectpicker.widget.form.append( context );
     jQuery.selectpicker.widget.options.hide( context );
-
-    context.selectpickerEnable();
+    jQuery.selectpicker.util.enable( context );
 
     jQuery( config.items.selector.options.inputId ).observeField( 0.2, function() {
       var query = jQuery( this ).val(),
@@ -74,7 +73,7 @@ jQuery.fn.selectpicker = function( options ) {
     },
     onOuterClick: function( event ) {
       jQuery( this ).each( function() {
-        jQuery( this ).prev().selectpickerOptionsClose();
+        jQuery.selectpicker.util.optionsClose( jQuery( this ).prev() );
       });
     },
     onSetValue: function( context, pickItem ) {
