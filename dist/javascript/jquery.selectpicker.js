@@ -7,14 +7,6 @@
 
 ( function() {
 "use strict";
-/*!
- * jquery.selectpicker v0.1.2
- *
- * Copyright (c) 2012 Takayuki Sugita, http://github.com/sugilog
- * Released under the MIT License
-*/
-(function($) {
-
 $.fn.selectpickerOptionsClose = function() {
   this.selectpicker({ callWidget: "hide" });
 };
@@ -410,53 +402,19 @@ $.fn.selectpicker = function(_options) {
   }
 }
 
-if (typeof $.fn.outerOn === "undefined" && typeof $.fn.outerOff === "undefined") {
-  $.fn.outerOn = function() {
-    var args = $(arguments).toArray();
-    var _this = this;
-    var handleEvent = (args.shift() + [".outer" + "_" + _this.eq(0).prop("id")].join());
-    var selector = "body";
-
-    if (typeof args[0] !== "function") {
-      selector = args.shift();
-    }
-
-    var callback = args.shift();
-
-    $(selector).on(handleEvent, function(e) {
-      if ($(e.target).closest(_this).length === 0) {
-        callback.apply(_this, [e]);
-      }
-    });
-  };
-
-  $.fn.outerOff = function() {
-    var args = $(arguments).toArray();
-    var _this = this;
-    var handleEvent = (args.shift() + [".outer" + "_" + _this.eq(0).prop("id")].join());
-    var selector = "body";
-
-    if (typeof args[0] !== "undefined") {
-      selector = args.shift();
-    }
-
-    $(selector).off(handleEvent);
-  }
-}
-
-if (typeof $.fn.observeField === "undefined") {
+if ( typeof jQuery.fn.observeField === "undefined" ) {
   // jquery.observe_field
   // https://github.com/splendeo/jquery.observe_field
-  $.fn.observeField = function(frequency, callback) {
+  jQuery.fn.observeField = function(frequency, callback) {
     frequency = frequency * 1000; // translate to milliseconds
     return this.each(function(){
-      var _this = $(this);
-      var prev = _this.val();
+      var self = jQuery(this);
+      var prev = self.val();
       var check = function() {
-        var val = _this.val();
+        var val = self.val();
         if(prev != val){
           prev = val;
-          _this.map(callback); // invokes the callback on $this
+          self.map(callback); // invokes the callback on jQuery this
         }
       };
       var reset = function() {
@@ -468,10 +426,42 @@ if (typeof $.fn.observeField === "undefined") {
       check();
       var ti = setInterval(check, frequency); // invoke check periodically
       // reset counter after user interaction
-      _this.bind('keyup click mousemove', reset); //mousemove is for selects
+      self.bind('keyup click mousemove', reset); //mousemove is for selects
     });
   };
 }
 
-})(jQuery);
+if ( typeof jQuery.fn.outerOn === "undefined" && typeof jQuery.fn.outerOff === "undefined" ) {
+  jQuery.fn.outerOn = function() {
+    var args = jQuery( arguments ).toArray(),
+        self = this,
+        handleEvent = ( args.shift() + [ ".outer" + "_" + self.eq( 0 ).prop( "id" ) ].join() ),
+        selector    = "body";
+
+    if ( typeof args[ 0 ] !== "function" ) {
+      selector = args.shift();
+    }
+
+    var callback = args.shift();
+
+    jQuery( selector ).on( handleEvent, function( event ) {
+      if ( jQuery( event.target ).closest( self ).length === 0 ) {
+        callback.apply( self, [ event ] );
+      }
+    });
+  };
+
+  jQuery.fn.outerOff = function() {
+    var args = jQuery( arguments ).toArray(),
+        self = this,
+        handleEvent = ( args.shift() + [ ".outer" + "_" + self.eq( 0 ).prop( "id" ) ].join() ),
+        selector    = "body";
+
+    if ( typeof args[ 0 ] !== "undefined" ) {
+      selector = args.shift();
+    }
+
+    jQuery( selector ).off( handleEvent );
+  }
+}
 })();

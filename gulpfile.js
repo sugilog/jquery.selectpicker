@@ -19,13 +19,9 @@ wrapTemplate = "/*!\n" +
 gulp.task( "js", function() {
   return gulp
     .src( [
-      "./src/javascript/jquery.selectpicker.js"
-      // "./src/javascript/core.js",
-      // "./src/javascript/config.js",
-      // "./src/javascript/widget.js",
-      // "./src/javascript/util.js",
-      // "./src/javascript/observe_field.js",
-      // "./src/javascript/outer.js"
+      "./src/javascript/core.js",
+      "./src/javascript/observe_field.js",
+      "./src/javascript/outer.js"
     ])
     .pipe( concat( "jquery.selectpicker.js" ) )
     .pipe( wrap( wrapTemplate, pkg, { variable: "data" } ) )
