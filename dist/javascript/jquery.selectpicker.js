@@ -86,7 +86,7 @@ jQuery.fn.selectpicker = function( options ) {
       });
     },
     onSetValue: function( context, pickItem ) {
-      if ( jQuery.inArray( pickItem, config.items.select.values ) ) {
+      if ( jQuery.inArray( pickItem, config.items.select.values ) >= 0 ) {
         jQuery.selectpicker.widget.form.set( context, pickItem );
         jQuery.selectpicker.widget.options.hide( context );
       }
