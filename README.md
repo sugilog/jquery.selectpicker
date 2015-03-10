@@ -3,6 +3,17 @@ jquery.selectpicker
 
 jquery plugin to change select box to searchable select box
 
+Require
+------------------------------------------------------------
+
+- jQuery 1.7+
+
+
+How to use
+------------------------------------------------------------
+
+Checkout the files in dist directory, into your project.
+
 
 Options
 ------------------------------------------------------------
@@ -100,6 +111,22 @@ toggle open and close the options:
 check selectpicker disable or not:
 
     jQuery(selector_for_select).selectpickerIsDisabled();
+
+
+Development
+------------------------------------------------------------
+
+### Required Environment
+
+require `node.js` to use `gulp` (building) and `karma` (testing, future support).
+
+after clone this repository, do `npm install`
+
+
+### Building
+
+do `gulp` to make files in dist.
+
 
 Licence
 ------------------------------------------------------------
