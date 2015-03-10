@@ -77,6 +77,10 @@ change picked item:
 
     jQuery.selectpicker.util.change( jQuery( selector_for_select ), value );  
 
+de-select picked item if selected:
+
+    jQuery.selectpicker.util.deselect( jQuery( selector_for_select ), value );  
+
 make enable selectpicker widget:
 
     jQuery.selectpicker.util.enable( jQuery( selector_for_select ) );  

@@ -75,6 +75,10 @@ jQuery.selectpicker.widget.form = {
       config.items.callback.onLoad.apply( context, [ value, label ] );
       config.loaded = true;
     }
+  },
+  get: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+    return jQuery( config.items.selector.form.id ).val();
   }
 };
 

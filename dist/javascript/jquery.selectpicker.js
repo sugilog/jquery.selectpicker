@@ -282,6 +282,10 @@ jQuery.selectpicker.widget.form = {
       config.items.callback.onLoad.apply( context, [ value, label ] );
       config.loaded = true;
     }
+  },
+  get: function( context ) {
+    var config = jQuery.selectpicker.config( context );
+    return jQuery( config.items.selector.form.id ).val();
   }
 };
 
@@ -509,16 +513,8 @@ jQuery.selectpicker.util = {
     config.events.onSetValue( context, pickItem );
   },
   deselect: function( context, deselectItem ) {
-    var current,
+    var current = jQuery.selectpicker.widget.form.get( context ),
         config = jQuery.selectpicker.config( context );
-
-    current = jQuery.selectpicker.widget.options.findCurrentPick( context );
-
-    if ( current.length === 0 ) {
-      return
-    }
-
-    current = current.data( config.items.dataKey );
 
     if ( current === deselectItem ) {
       config.events.onSetValue( context, "" );
