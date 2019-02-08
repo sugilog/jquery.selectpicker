@@ -29,7 +29,7 @@ jQuery.extend(
   jQuery.selectpicker.config,
   {
     contextName: function( context ) {
-      return context.prop( "name" );
+      return context.data().selectpickerName || context.prop( "name" );
     },
     items: function( context, options ) {
       var name = jQuery.selectpicker.config.contextName( context ),
